@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import { styled } from '@mui/material/styles';
-import { Grid, Button } from '@mui/material'
-import { UploadFile } from '@mui/icons-material'
-import { PDFDocument } from 'pdf-lib'
+import { Grid, Button } from '@mui/material';
+import { UploadFile, CallSplit } from '@mui/icons-material';
+import { PDFDocument } from 'pdf-lib';
+import JSZip from 'jszip';
+import { saveAs } from 'file-saver'
 
 type CertificateUtilityProps = {}
 type CertificateUtilityState = { document: PDFDocument | null}
@@ -20,6 +22,7 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
 
         this.onFileChange = this.onFileChange.bind(this);
         this.fileData = this.fileData.bind(this);
+        this.onSplitClick = this.onSplitClick.bind(this);
     }
 
     async onFileChange(event: any) {
@@ -41,12 +44,41 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
         }
     }
 
+    async onSplitClick(event: any) {
+        let zipFile: JSZip = new JSZip();
+        const pdfDoc = this.state.document;
+        if (!pdfDoc) {
+            console.error("there was an issue reading the page count of PDF...")
+            return;
+        }
+
+        const pageCount = pdfDoc?.getPageCount();
+
+        if(!pageCount && pageCount === 0) {
+            console.error("PDF was not loaded successfully or it's empty. Make sure a PDF was selected...");
+            return;
+        }
+
+        for(let i = 0; i < pageCount; i++) {
+            const subDoc = await PDFDocument.create();
+            const [copiedPage] = await subDoc.copyPages(pdfDoc, [i]);
+            subDoc.addPage(copiedPage);
+            const pdfBytes = await subDoc.save();
+            zipFile.file(`test ${i + 1}.pdf`, pdfBytes);
+        }
+
+        zipFile.generateAsync({type: "blob"})
+            .then(function(content) {
+                saveAs(content, "test.zip");
+            })
+    }
+
     fileData() {
         if (this.state.document) {
             return (
                 <div>
                     <h2>File Details:</h2>
-                    <p>File Name: {this.state.document.getTitle()}</p>
+                    <p>File Name: {this.state.document.getSubject()}</p>
                     <p>
                         Last Modified:{" "}
                         {this.state.document.getModificationDate()?.toDateString()}
@@ -66,17 +98,24 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
                 alignItems='center'
                 justifyContent='center'
             >
-                <div className="CertificateUtility">
-                    <label htmlFor="pdf-upload-button">
-                        <Input accept=".pdf" id="pdf-upload-button" type="file" onChange={this.onFileChange} />
-                        <Button variant="contained" component="span" startIcon={<UploadFile />}>
-                            Select PDF
-                        </Button>
-                    </label>
-                </div>
-                <div>
+                <Grid item sx={{m: .5}}>
+                    <div className="CertificateUtility">
+                        <label htmlFor="pdf-upload-button">
+                            <Input accept=".pdf" id="pdf-upload-button" type="file" onChange={this.onFileChange} />
+                            <Button variant="contained" component="span" startIcon={<UploadFile />}>
+                                Select PDF
+                            </Button>
+                        </label>
+                    </div>
+                </Grid>
+                <Grid item sx={{m: .5}}>
                     {this.fileData()}
-                </div>
+                </Grid>
+                <Grid item sx={{m: .5}}>
+                    <Button variant="contained" startIcon={<CallSplit />} onClick={this.onSplitClick}>
+                        Split PDF
+                    </Button>
+                </Grid>
             </Grid>
 
         )
