@@ -5,10 +5,10 @@ import { UploadFile } from '@mui/icons-material'
 import { PDFDocument } from 'pdf-lib'
 
 type CertificateUtilityProps = {}
-type CertificateUtilityState = { document: any}
+type CertificateUtilityState = { document: PDFDocument | null}
 
 const Input = styled('input')({
-    display: 'none',
+    display: 'none'
 });
 
 class CertificateUtility extends Component<CertificateUtilityProps, CertificateUtilityState> {
@@ -23,9 +23,22 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
     }
 
     async onFileChange(event: any) {
-        this.setState({
-            document: event.target.files[0]
-        });
+        let reader = new FileReader();
+        let file = event.target.files[0];
+
+        reader.readAsArrayBuffer(file);
+        reader.onloadend = async (e) => {
+            if (e.target?.readyState === FileReader.DONE) {
+                let arrayBuffer = e.target.result as ArrayBuffer;
+                let typedArray = new Uint8Array(arrayBuffer);
+                let pdfDoc = await PDFDocument.load(typedArray, {
+                    updateMetadata: false
+                  })
+                this.setState({
+                    document: pdfDoc
+                });
+            }
+        }
     }
 
     fileData() {
@@ -33,20 +46,12 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
             return (
                 <div>
                     <h2>File Details:</h2>
-                    <p>File Name: {this.state.document.name}</p>
-                    <p>File Type: {this.state.document.type}</p>
+                    <p>File Name: {this.state.document.getTitle()}</p>
                     <p>
                         Last Modified:{" "}
-                        {this.state.document.lastModifiedDate.toDateString()}
+                        {this.state.document.getModificationDate()?.toDateString()}
                     </p>
 
-                </div>
-            );
-        } else {
-            return (
-                <div>
-                    <br />
-                    <h4>Choose before Pressing the Upload button</h4>
                 </div>
             );
         }
