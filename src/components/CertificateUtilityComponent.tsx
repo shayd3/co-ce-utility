@@ -1,21 +1,13 @@
 import React, { Component } from 'react';
 import { styled } from '@mui/material/styles';
 import { Grid, Button } from '@mui/material';
-import { UploadFile, CallSplit, TokenTwoTone } from '@mui/icons-material';
+import { UploadFile, CallSplit } from '@mui/icons-material';
+import { PDFDocument } from 'pdf-lib';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver'
-import { PDFDocument } from 'pdf-lib';
-import * as PDFJS from "pdfjs-dist";
-import { TextItem, TypedArray } from 'pdfjs-dist/types/src/display/api';
-import { IRenderableView } from 'pdfjs-dist/types/web/interfaces';
-PDFJS.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${PDFJS.version}/pdf.worker.js`;
 
 type CertificateUtilityProps = {}
-type CertificateUtilityState = {
-    document: PDFDocument | null,
-    documentRaw: Uint8Array,
-    content: string
-}
+type CertificateUtilityState = { document: PDFDocument | null}
 
 const Input = styled('input')({
     display: 'none'
@@ -25,15 +17,12 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
     constructor(props: CertificateUtilityProps) {
         super(props);
         this.state = {
-            document: null,
-            documentRaw: new Uint8Array(),
-            content: ""
+            document: null
         }
 
         this.onFileChange = this.onFileChange.bind(this);
         this.fileData = this.fileData.bind(this);
         this.onSplitClick = this.onSplitClick.bind(this);
-        this.onGetNamesClick = this.onGetNamesClick.bind(this);
     }
 
     async onFileChange(event: any) {
@@ -49,8 +38,7 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
                     updateMetadata: false
                   })
                 this.setState({
-                    document: pdfDoc,
-                    documentRaw: typedArray
+                    document: pdfDoc
                 });
             }
         }
@@ -83,25 +71,6 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
             .then(function(content) {
                 saveAs(content, "test.zip");
             })
-    }
-
-    async onGetNamesClick(event: any) {
-        const pdf = this.state.document
-        const pdfRaw = this.state.documentRaw
-        if (!pdf) {
-            console.error("there was an issue reading PDF...")
-            return;
-        }
-        const doc = await PDFJS.getDocument(pdfRaw).promise;
-        const page = await doc.getPage(1)
-        console.log(page)
-        const content = await page.getTextContent()
-        let items = content.items
-        console.log(items)
-        this.setState({
-            content: content.items.map(token => (token as TextItem).str).join("")
-        });
-
     }
 
     fileData() {
@@ -146,14 +115,6 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
                     <Button variant="contained" startIcon={<CallSplit />} onClick={this.onSplitClick}>
                         Split PDF
                     </Button>
-                </Grid>
-                <Grid item sx={{m: .5}}>
-                    <Button variant="contained" startIcon={<CallSplit />} onClick={this.onGetNamesClick}>
-                        Get Names
-                    </Button>
-                </Grid>
-                <Grid item sx={{m: .2}}>
-                    {this.state.content}
                 </Grid>
             </Grid>
 
