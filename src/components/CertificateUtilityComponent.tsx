@@ -13,7 +13,7 @@ type CertificateUtilityProps = {}
 type CertificateUtilityState = {
     document: PDFDocument | null,
     documentRaw: Uint8Array,
-    content: string
+    content: TextItem[][]
 }
 
 const Input = styled('input')({
@@ -26,7 +26,7 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
         this.state = {
             document: null,
             documentRaw: new Uint8Array(),
-            content: ""
+            content: []
         }
 
         this.onFileChange = this.onFileChange.bind(this);
@@ -63,26 +63,33 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
             return;
         }
         const doc = await PDFJS.getDocument(pdfRaw).promise;
-        const page = await doc.getPage(1)
-        const content = await page.getTextContent()
-        let items = content.items
-        console.log(items)
-        this.setState({
-            content: content.items.map(token => (token as TextItem).str).join("")
-        });
+        const pdfPageCount = pdf.getPageCount()
+        let pdfPagesItems:TextItem[][] = [];
 
+        for(let i = 1; i <= pdfPageCount; i++) {
+            let page = await doc.getPage(i)
+            let content = await page.getTextContent()
+            let items = content.items
+            // content.items.map(token => (token as TextItem).str).join("")
+            pdfPagesItems.push(items as TextItem[])
+        }
+
+        this.setState({
+            content: pdfPagesItems
+        })
+        console.log(pdfPagesItems)
     }
 
-    async onSplitPdfClick(event: any) {
+    async onSplitPdfClick() {
         let pdf = this.state.document;
         if(!pdf) {
             console.error("PDF was not loaded successfully or it's empty. Make sure a PDF was selected...");
             return;
         }
-        this.splitPdf(pdf, "PDFSplit.zip", false);
+        this.splitPdf(pdf, "PDFSplit.zip", false, "");
     }
 
-    async splitPdf(pdf: PDFDocument, zipFileName: string, extractNames: boolean) {
+    async splitPdf(pdf: PDFDocument, zipFileName: string, extractNames: boolean, state: string) {
         let zipFile: JSZip = new JSZip();
 
         const pageCount = pdf?.getPageCount();
@@ -145,7 +152,7 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
                     {this.fileData()}
                 </Grid>
                 <Grid item sx={{m: .5}}>
-                    <Button variant="contained" startIcon={<CallSplit />} onClick={this.onSplitPdfClick}>
+                    <Button variant="contained" startIcon={<CallSplit />} onClick={() => this.onSplitPdfClick}>
                         Split PDF
                     </Button>
                 </Grid>
