@@ -31,7 +31,7 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
 
         this.onFileChange = this.onFileChange.bind(this);
         this.fileData = this.fileData.bind(this);
-        this.onSplitClick = this.onSplitClick.bind(this);
+        this.onSplitPdfClick = this.onSplitPdfClick.bind(this);
         this.onGetNamesClick = this.onGetNamesClick.bind(this);
     }
 
@@ -64,7 +64,6 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
         }
         const doc = await PDFJS.getDocument(pdfRaw).promise;
         const page = await doc.getPage(1)
-        console.log(page)
         const content = await page.getTextContent()
         let items = content.items
         console.log(items)
@@ -74,32 +73,36 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
 
     }
 
-    async onSplitClick(event: any) {
-        let zipFile: JSZip = new JSZip();
-        const pdfDoc = this.state.document;
-        if (!pdfDoc) {
-            console.error("there was an issue reading the page count of PDF...")
+    async onSplitPdfClick(event: any) {
+        let pdf = this.state.document;
+        if(!pdf) {
+            console.error("PDF was not loaded successfully or it's empty. Make sure a PDF was selected...");
             return;
         }
+        this.splitPdf(pdf, "PDFSplit.zip", false);
+    }
 
-        const pageCount = pdfDoc?.getPageCount();
+    async splitPdf(pdf: PDFDocument, zipFileName: string, extractNames: boolean) {
+        let zipFile: JSZip = new JSZip();
+
+        const pageCount = pdf?.getPageCount();
 
         if(!pageCount && pageCount === 0) {
-            console.error("PDF was not loaded successfully or it's empty. Make sure a PDF was selected...");
+            console.error("there was an issue reading the page count of PDF...");
             return;
         }
 
         for(let i = 0; i < pageCount; i++) {
             const subDoc = await PDFDocument.create();
-            const [copiedPage] = await subDoc.copyPages(pdfDoc, [i]);
+            const [copiedPage] = await subDoc.copyPages(pdf, [i]);
             subDoc.addPage(copiedPage);
             const pdfBytes = await subDoc.save();
-            zipFile.file(`test ${i + 1}.pdf`, pdfBytes);
+            zipFile.file(`${i + 1}.pdf`, pdfBytes);
         }
 
         zipFile.generateAsync({type: "blob"})
             .then(function(content) {
-                saveAs(content, "test.zip");
+                saveAs(content, zipFileName);
             })
     }
 
@@ -108,7 +111,7 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
             return (
                 <div>
                     <h2>File Details:</h2>
-                    <p>File Name: {this.state.document.getSubject()}</p>
+                    <p>Total Pages: {this.state.document.getPageCount()}</p>
                     <p>
                         Last Modified:{" "}
                         {this.state.document.getModificationDate()?.toDateString()}
@@ -142,17 +145,14 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
                     {this.fileData()}
                 </Grid>
                 <Grid item sx={{m: .5}}>
-                    <Button variant="contained" startIcon={<CallSplit />} onClick={this.onSplitClick}>
+                    <Button variant="contained" startIcon={<CallSplit />} onClick={this.onSplitPdfClick}>
                         Split PDF
                     </Button>
                 </Grid>
                 <Grid item sx={{m: .5}}>
                     <Button variant="contained" startIcon={<CallSplit />} onClick={this.onGetNamesClick}>
-                        Get Names
+                        Split PDF (TX)
                     </Button>
-                </Grid>
-                <Grid item sx={{m: .2}}>
-                    {this.state.content}
                 </Grid>
             </Grid>
 
