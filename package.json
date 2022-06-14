@@ -2,6 +2,7 @@
   "name": "co-ce-utility",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://shayd3.github.io/co-ce-utilities",
   "dependencies": {
     "@emotion/react": "^11.9.0",
     "@emotion/styled": "^11.8.1",
@@ -17,6 +18,7 @@
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
     "file-saver": "^2.0.5",
+    "gh-pages": "^4.0.0",
     "jszip": "^3.10.0",
     "pdf-lib": "^1.17.1",
     "react": "^18.1.0",
@@ -29,7 +31,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -b main -d build"
   },
   "eslintConfig": {
     "extends": [
