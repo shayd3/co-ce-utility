@@ -22,7 +22,9 @@ const Input = styled('input')({
 });
 
 enum StateNamePosition {
-    TX = 38
+    TX = 38,
+    GA = 98,
+    NC = 20
 }
 
 class CertificateUtility extends Component<CertificateUtilityProps, CertificateUtilityState> {
@@ -68,15 +70,10 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
             console.error("PDF was not loaded successfully or it's empty. Make sure a PDF was selected...");
             return;
         }
-        switch (state) {
-            case "": {
-                this.splitPdf(pdf, "PDFSplit.zip", false, "")
-                break;
-            }
-            case "TX": {
-                this.splitPdf(pdf, "TX_Split.zip", true, "TX")
-                break;
-            }
+        if (state === "") {
+            this.splitPdf(pdf, "PDFSplit.zip", false, "")
+        } else {
+            this.splitPdf(pdf, `${state.toUpperCase()}_Split.zip`, true, state.toUpperCase())
         }
     }
 
@@ -149,6 +146,7 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
             // content.items.map(token => (token as TextItem).str).join("")
             pdfPagesItems.push(items as TextItem[])
         }
+        console.log(pdfPagesItems)
         return pdfPagesItems
     }
 
@@ -208,6 +206,16 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
                 <Grid item sx={{m: .5}}>
                     <Button variant="contained" startIcon={<CallSplit />} onClick={() => this.onSplitPdfClick("TX")}>
                         Split PDF (TX)
+                    </Button>
+                </Grid>
+                <Grid item sx={{m: .5}}>
+                    <Button variant="contained" startIcon={<CallSplit />} onClick={() => this.onSplitPdfClick("GA")}>
+                        Split PDF (GA)
+                    </Button>
+                </Grid>
+                <Grid item sx={{m: .5}}>
+                    <Button variant="contained" startIcon={<CallSplit />} onClick={() => this.onSplitPdfClick("NC")}>
+                        Split PDF (NC)
                     </Button>
                 </Grid>
             </Grid>
