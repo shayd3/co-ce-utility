@@ -11,6 +11,7 @@ PDFJS.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/$
 
 type CertificateUtilityProps = {}
 type CertificateUtilityState = {
+    fileName: string,
     document: PDFDocument | null,
     documentRaw: Uint8Array,
     content: TextItem[][]
@@ -28,6 +29,7 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
     constructor(props: CertificateUtilityProps) {
         super(props);
         this.state = {
+            fileName: "",
             document: null,
             documentRaw: new Uint8Array(),
             content: []
@@ -42,7 +44,7 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
     async onFileChange(event: any) {
         let reader = new FileReader();
         let file = event.target.files[0];
-
+        let fileName = file.name
         reader.readAsArrayBuffer(file);
         reader.onloadend = async (e) => {
             if (e.target?.readyState === FileReader.DONE) {
@@ -52,6 +54,7 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
                     updateMetadata: false
                   })
                 this.setState({
+                    fileName: fileName,
                     document: pdfDoc,
                     documentRaw: typedArray
                 });
@@ -163,6 +166,7 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
             return (
                 <div>
                     <h2>File Details:</h2>
+                    <p>Selected File: {this.state.fileName}</p>
                     <p>Total Pages: { this.state.document.getPageCount() }</p>
                     <p>
                         Last Modified:{" "}
