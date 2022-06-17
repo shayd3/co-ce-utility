@@ -20,6 +20,10 @@ const Input = styled('input')({
     display: 'none'
 });
 
+enum StateNamePosition {
+    TX = 38
+}
+
 class CertificateUtility extends Component<CertificateUtilityProps, CertificateUtilityState> {
     constructor(props: CertificateUtilityProps) {
         super(props);
@@ -32,7 +36,7 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
         this.onFileChange = this.onFileChange.bind(this);
         this.fileData = this.fileData.bind(this);
         this.onSplitPdfClick = this.onSplitPdfClick.bind(this);
-        this.onGetNamesClick = this.onGetNamesClick.bind(this);
+        this.getTextContentFromAllPages = this.getTextContentFromAllPages.bind(this);
     }
 
     async onFileChange(event: any) {
@@ -55,56 +59,65 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
         }
     }
 
-    async onGetNamesClick(event: any) {
-        const pdf = this.state.document
-        const pdfRaw = this.state.documentRaw
-        if (!pdf) {
-            console.error("there was an issue reading PDF...")
-            return;
-        }
-        const doc = await PDFJS.getDocument(pdfRaw).promise;
-        const pdfPageCount = pdf.getPageCount()
-        let pdfPagesItems:TextItem[][] = [];
-
-        for(let i = 1; i <= pdfPageCount; i++) {
-            let page = await doc.getPage(i)
-            let content = await page.getTextContent()
-            let items = content.items
-            // content.items.map(token => (token as TextItem).str).join("")
-            pdfPagesItems.push(items as TextItem[])
-        }
-
-        this.setState({
-            content: pdfPagesItems
-        })
-        console.log(pdfPagesItems)
-    }
-
-    async onSplitPdfClick() {
+    async onSplitPdfClick(state: string) {
         let pdf = this.state.document;
         if(!pdf) {
             console.error("PDF was not loaded successfully or it's empty. Make sure a PDF was selected...");
             return;
         }
-        this.splitPdf(pdf, "PDFSplit.zip", false, "");
+        switch (state) {
+            case "": {
+                this.splitPdf(pdf, "PDFSplit.zip", false, "")
+                break;
+            }
+            case "TX": {
+                this.splitPdf(pdf, "TX_Split.zip", true, "TX")
+                break;
+            }
+        }
     }
 
     async splitPdf(pdf: PDFDocument, zipFileName: string, extractNames: boolean, state: string) {
-        let zipFile: JSZip = new JSZip();
-
         const pageCount = pdf?.getPageCount();
 
+        // Get page count for page split
         if(!pageCount && pageCount === 0) {
             console.error("there was an issue reading the page count of PDF...");
             return;
         }
+
+        // Start name extraction if true
+        let lastNames:string[] = []
+        if (extractNames) {
+            let pdfTextContent = await this.getTextContentFromAllPages()
+            if(!pdfTextContent) {
+                console.error("there was an issue getting text content from selected pdf...");
+                return;
+            }
+            pdfTextContent.forEach( (page, i)=> {
+                let fullName = page[StateNamePosition[state as keyof typeof StateNamePosition]].str
+                let lastName = this.getLastWordInStr(fullName)
+                if (lastName == undefined) {
+                    console.error(`there was an issue getting last name from page ${i + 1}...`)
+                    return
+                }
+                lastNames.push(lastName)
+            })
+        }
+
+        let zipFile: JSZip = new JSZip();
 
         for(let i = 0; i < pageCount; i++) {
             const subDoc = await PDFDocument.create();
             const [copiedPage] = await subDoc.copyPages(pdf, [i]);
             subDoc.addPage(copiedPage);
             const pdfBytes = await subDoc.save();
-            zipFile.file(`${i + 1}.pdf`, pdfBytes);
+            if(state === "") {
+                zipFile.file(`${i + 1}.pdf`, pdfBytes);
+            } else {
+                zipFile.file(`${lastNames[i]} - ${state}.pdf`, pdfBytes)
+            }
+
         }
 
         zipFile.generateAsync({type: "blob"})
@@ -113,15 +126,47 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
             })
     }
 
+    // getTextContentFromAllPages() pulls the current pdf and pdf bytes array from state
+    // and gets all text contents from each page
+    async getTextContentFromAllPages() {
+        const pdf = this.state.document;
+        const pdfRaw = this.state.documentRaw;
+        if (!pdf) {
+            console.error("there was an issue reading PDF...")
+            return;
+        }
+        const doc = await PDFJS.getDocument(pdfRaw).promise;
+        const pdfPageCount = pdf.getPageCount()
+        let pdfPagesItems:TextItem[][] = []
+
+        for(let i = 1; i <= pdfPageCount; i++) {
+            let page = await doc.getPage(i)
+            let content = await page.getTextContent()
+            let items = content.items
+            // content.items.map(token => (token as TextItem).str).join("")
+            pdfPagesItems.push(items as TextItem[])
+        }
+        return pdfPagesItems
+    }
+
+    // extractStringFromPDF() extracts string from given page and line number from given TextItem[][]
+    extractStringFromPDF(pdfPagesContent: TextItem[][], pageNum: number, lineNum: number) {
+        return (pdfPagesContent[pageNum][lineNum]).str
+    }
+
+    getLastWordInStr(str: string) {
+        return str.split(" ").pop()
+    }
+
     fileData() {
         if (this.state.document) {
             return (
                 <div>
                     <h2>File Details:</h2>
-                    <p>Total Pages: {this.state.document.getPageCount()}</p>
+                    <p>Total Pages: { this.state.document.getPageCount() }</p>
                     <p>
                         Last Modified:{" "}
-                        {this.state.document.getModificationDate()?.toDateString()}
+                        { this.state.document.getModificationDate()?.toDateString() }
                     </p>
 
                 </div>
@@ -152,12 +197,12 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
                     {this.fileData()}
                 </Grid>
                 <Grid item sx={{m: .5}}>
-                    <Button variant="contained" startIcon={<CallSplit />} onClick={() => this.onSplitPdfClick}>
+                    <Button variant="contained" startIcon={<CallSplit />} onClick={() => this.onSplitPdfClick("")}>
                         Split PDF
                     </Button>
                 </Grid>
                 <Grid item sx={{m: .5}}>
-                    <Button variant="contained" startIcon={<CallSplit />} onClick={this.onGetNamesClick}>
+                    <Button variant="contained" startIcon={<CallSplit />} onClick={() => this.onSplitPdfClick("TX")}>
                         Split PDF (TX)
                     </Button>
                 </Grid>
