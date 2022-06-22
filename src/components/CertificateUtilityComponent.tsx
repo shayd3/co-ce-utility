@@ -195,11 +195,18 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
     }
 
     fileData() {
+        let signatureUrl = ""
+        if (this.state.signaturePicture) {
+            const blob = new Blob( [ this.state.signaturePicture ] );
+            console.log(blob)
+            signatureUrl = URL.createObjectURL( blob );
+        }
         if (this.state.document) {
             return (
                 <div>
                     <h2>File Details:</h2>
                     <p>Selected File: {this.state.fileName}</p>
+                    <p>Selected Signature: <img src={signatureUrl}></img></p>
                     <p>Total Pages: { this.state.document.getPageCount() }</p>
                     <p>
                         Last Modified:{" "}
