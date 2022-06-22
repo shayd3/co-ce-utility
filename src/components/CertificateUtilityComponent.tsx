@@ -8,6 +8,7 @@ import { PDFDocument } from 'pdf-lib'; // PDF Split, as well as modification
 import * as PDFJS from "pdfjs-dist"; // Text Extraction
 import { TextItem } from 'pdfjs-dist/types/src/display/api';
 import { read } from 'fs';
+import { StatePDF } from '../models/StatePDF';
 PDFJS.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${PDFJS.version}/pdf.worker.js`;
 
 type CertificateUtilityProps = {}
@@ -23,10 +24,10 @@ const Input = styled('input')({
     display: 'none'
 });
 
-enum StateNamePosition {
-    TX = 38,
-    GA = 98,
-    NC = 20
+const states : Record<string, StatePDF> = {
+    'TX': new StatePDF("Texas", "TX", 38, 0, 0, 0, 0),
+    'GA': new StatePDF("Georgia", "GA", 98, 0, 0, 0, 0),
+    'NC': new StatePDF("North Carolina", "NC", 20, 325, 405, 296, 30)
 }
 
 class CertificateUtility extends Component<CertificateUtilityProps, CertificateUtilityState> {
@@ -97,7 +98,7 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
     }
 
     async splitPdf(pdf: PDFDocument, zipFileName: string, extractNames: boolean, addSignature: boolean, state: string) {
-        const pageCount = pdf?.getPageCount();
+        const pageCount = pdf.getPageCount();
 
         // Get page count for page split
         if(!pageCount && pageCount === 0) {
@@ -114,7 +115,7 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
                 return;
             }
             pdfTextContent.forEach( (page, i)=> {
-                let fullName = page[StateNamePosition[state as keyof typeof StateNamePosition]].str
+                let fullName = page[states[state].getProducerNameIndex()].str
                 let lastName = this.getLastWordInStr(fullName)
                 if (lastName == undefined) {
                     console.error(`there was an issue getting last name from page ${i + 1}...`)
@@ -125,7 +126,19 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
         }
 
         if(addSignature) {
-            if this.state.signaturePicture.
+            if(this.state.signaturePicture.length != 0) {
+                let signature = await pdf.embedPng(this.state.signaturePicture)
+                let scaledSignature = signature.scaleToFit(states[state].getSignatureWidthBoundary(), states[state].getSignatureHeightBoundary())
+
+                pdf.getPages().forEach(page => {
+                    page.drawImage(signature, {
+                        x: states[state].getSignatureX(),
+                        y: states[state].getSignatureY(),
+                        height: scaledSignature.height,
+                        width: scaledSignature.width
+                    })
+                })
+            }
         }
 
         let zipFile: JSZip = new JSZip();
@@ -169,12 +182,7 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
             // content.items.map(token => (token as TextItem).str).join("")
             pdfPagesItems.push(items as TextItem[])
         }
-        console.log(pdfPagesItems)
         return pdfPagesItems
-    }
-
-    async embedSignature(pdf: PDFDocument, signaturePicture: Uint8Array) {
-
     }
 
     // extractStringFromPDF() extracts string from given page and line number from given TextItem[][]
@@ -223,7 +231,7 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
                 </Grid>
                 <Grid item xs>
                     <label htmlFor="signature-upload-button">
-                        <Input accept="image/*" id="signature-upload-button" type="file" onChange={this.onSignatureFileChange} />
+                        <Input accept=".png" id="signature-upload-button" type="file" onChange={this.onSignatureFileChange} />
                         <Button variant="contained" component="span" startIcon={<DriveFileRenameOutline />}>
                             Select Signature
                         </Button>
