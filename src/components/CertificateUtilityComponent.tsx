@@ -27,7 +27,11 @@ const Input = styled('input')({
 const states : Record<string, StatePDF> = {
     'TX': new StatePDF("Texas", "TX", 38, 0, 0, 0, 0),
     'GA': new StatePDF("Georgia", "GA", 98, 0, 0, 0, 0),
-    'NC': new StatePDF("North Carolina", "NC", 20, 325, 405, 296, 30)
+    'NC': new StatePDF("North Carolina", "NC", 20, 325, 405, 296, 30),
+    'FL': new StatePDF("Florida", "FL", 38, 0, 0, 190, 50),
+    'OK': new StatePDF("Oklahoma", "OK", 38, 0, 0, 190, 50),
+    'DE': new StatePDF("Delaware", "DE", 38, 0, 0, 190, 50),
+    'WV': new StatePDF("West Virginia", "WV", 38, 0, 0, 330, 35)
 }
 
 class CertificateUtility extends Component<CertificateUtilityProps, CertificateUtilityState> {
@@ -179,9 +183,9 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
             let page = await doc.getPage(i)
             let content = await page.getTextContent()
             let items = content.items
-            // content.items.map(token => (token as TextItem).str).join("")
             pdfPagesItems.push(items as TextItem[])
         }
+        console.log(pdfPagesItems)
         return pdfPagesItems
     }
 
@@ -198,7 +202,6 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
         let signatureUrl = ""
         if (this.state.signaturePicture) {
             const blob = new Blob( [ this.state.signaturePicture ] );
-            console.log(blob)
             signatureUrl = URL.createObjectURL( blob );
         }
         if (this.state.document) {
@@ -266,6 +269,26 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
                 <Grid item>
                     <Button variant="contained" startIcon={<CallSplit />} onClick={() => this.onSplitPdfClick("NC")}>
                         Split PDF + Sign (NC)
+                    </Button>
+                </Grid>
+                <Grid item>
+                    <Button variant="contained" startIcon={<CallSplit />} onClick={() => this.onSplitPdfClick("FL")}>
+                        Split PDF + Sign (FL)
+                    </Button>
+                </Grid>
+                <Grid item>
+                    <Button variant="contained" startIcon={<CallSplit />} onClick={() => this.onSplitPdfClick("OK")}>
+                        Split PDF + Sign (OK)
+                    </Button>
+                </Grid>
+                <Grid item>
+                    <Button variant="contained" startIcon={<CallSplit />} onClick={() => this.onSplitPdfClick("DE")}>
+                        Split PDF + Sign (DE)
+                    </Button>
+                </Grid>
+                <Grid item>
+                    <Button variant="contained" startIcon={<CallSplit />} onClick={() => this.onSplitPdfClick("WV")}>
+                        Split PDF + Sign (WV)
                     </Button>
                 </Grid>
             </Grid>
