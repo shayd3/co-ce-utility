@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
+import './CertificateUtilityComponent.css';
 import { styled } from '@mui/material/styles';
-import { Grid, Button, Stack } from '@mui/material';
+import { Grid, Button, Divider, Paper } from '@mui/material';
 import { UploadFile, CallSplit, DriveFileRenameOutline } from '@mui/icons-material';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver'
@@ -202,7 +203,7 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
         if (this.state.document) {
             return (
                 <div>
-                    <h2>File Details:</h2>
+                    <h2>PDF Details:</h2>
                     <p><b>Selected File:</b> {this.state.fileName}</p>
                     <p><b>Total Pages:</b> {this.state.document.getPageCount()}</p>
                     <p>
@@ -215,7 +216,7 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
         } else {
             return (
                 <div>
-                    <h2>File Details:</h2>
+                    <h2>PDF Details:</h2>
                     <p>No PDF selected</p>
                 </div>
             );
@@ -256,77 +257,80 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
                     alignItems="flex-start"
                     justifyContent='flex-start'
                     spacing={1}
-                    sx={{ m: 1 }}
+                    sx={{ m: 2 }}
                 >
-                    <Grid
-                        id='CertificateUtilityDetails'
-                        container
-                        spacing={1}
-                        sx={{ m: 1 }}
-                    >
-                        <Grid item>
-                            {this.fileData()}
-                        </Grid>
-                        <Grid item>
-                            {this.signatureData()}
-                        </Grid>
+                    <Paper elevation={3}>
+                        <Grid
+                            id='CertificateUtilityDetails'
+                            container
+                            textAlign="left"
+                            sx={{ m: 1 }}
+                        >
+                            <Grid item sx={{ mx: 1.5 }}>
 
-                    </Grid>
-                    <Grid item xs>
-                        <label htmlFor="pdf-upload-button">
-                            <Input accept=".pdf" id="pdf-upload-button" type="file" onChange={this.onPDFFileChange} />
-                            <Button variant="contained" component="span" startIcon={<UploadFile />}>
-                                Select PDF
-                            </Button>
-                        </label>
-                    </Grid>
-                    <Grid item xs>
-                        <label htmlFor="signature-upload-button">
-                            <Input accept=".png" id="signature-upload-button" type="file" onChange={this.onSignatureFileChange} />
-                            <Button variant="contained" component="span" startIcon={<DriveFileRenameOutline />}>
-                                Select Signature
-                            </Button>
-                        </label>
-                    </Grid>
-                    <hr/>
+                                <label htmlFor="pdf-upload-button">
+                                    <Input accept=".pdf" id="pdf-upload-button" type="file" onChange={this.onPDFFileChange} />
+                                    <Button variant="contained" component="span" startIcon={<UploadFile />}>
+                                        Select PDF
+                                    </Button>
+                                </label>
+
+                                {this.fileData()}
+                            </Grid>
+                            <Divider orientation="vertical" flexItem />
+                            <Grid item sx={{ mx: 1.5 }}>
+                                <label htmlFor="signature-upload-button">
+                                    <Input accept=".png" id="signature-upload-button" type="file" onChange={this.onSignatureFileChange} />
+                                    <Button variant="contained" component="span" startIcon={<DriveFileRenameOutline />}>
+                                        Select Signature
+                                    </Button>
+                                </label>
+                                {this.signatureData()}
+                            </Grid>
+                        </Grid>
+                    </Paper>
+                    <h2>Split PDF</h2>
                     <Grid item>
                         <Button variant="contained" startIcon={<CallSplit />} onClick={() => this.onSplitPdfClick("")}>
-                            Split PDF
+                            Split
+                        </Button>
+                    </Grid>
+                    <h2>Split and Rename PDF</h2>
+                    <Grid item>
+                        <Button fullWidth variant="contained" startIcon={<CallSplit />} onClick={() => this.onSplitPdfClick("DE")}>
+                            Delaware
                         </Button>
                     </Grid>
                     <Grid item>
-                        <Button variant="contained" startIcon={<CallSplit />} onClick={() => this.onSplitPdfClick("TX")}>
-                            Split PDF (TX)
+                        <Button fullWidth variant="contained" startIcon={<CallSplit />} onClick={() => this.onSplitPdfClick("FL")}>
+                            Florida
                         </Button>
                     </Grid>
                     <Grid item>
                         <Button variant="contained" startIcon={<CallSplit />} onClick={() => this.onSplitPdfClick("GA")}>
-                            Split PDF (GA)
-                        </Button>
-                    </Grid>
-                    <Grid item>
-                        <Button variant="contained" startIcon={<CallSplit />} onClick={() => this.onSplitPdfClick("FL")}>
-                            Split PDF (FL)
+                            Georgia
                         </Button>
                     </Grid>
                     <Grid item>
                         <Button variant="contained" startIcon={<CallSplit />} onClick={() => this.onSplitPdfClick("OK")}>
-                            Split PDF (OK)
+                            Oklahoma
                         </Button>
                     </Grid>
                     <Grid item>
-                        <Button variant="contained" startIcon={<CallSplit />} onClick={() => this.onSplitPdfClick("DE")}>
-                            Split PDF (DE)
+                        <Button variant="contained" startIcon={<CallSplit />} onClick={() => this.onSplitPdfClick("TX")}>
+                            Texas
+                        </Button>
+                    </Grid>
+
+                    <h2>Split, Rename, and Sign PDF</h2>
+                    <Grid item>
+                        <Button variant="contained" startIcon={<DriveFileRenameOutline />} onClick={() => this.onSplitPdfClick("NC")}>
+                            North Carolina
                         </Button>
                     </Grid>
                     <Grid item>
-                        <Button variant="contained" startIcon={<CallSplit />} onClick={() => this.onSplitPdfClick("NC")}>
-                            Split PDF + Sign (NC)
-                        </Button>
-                    </Grid>
-                    <Grid item>
-                        <Button variant="contained" startIcon={<CallSplit />} onClick={() => this.onSplitPdfClick("WV")}>
-                            Split PDF + Sign (WV)
+                        <Button variant="contained" startIcon={<DriveFileRenameOutline />} onClick={() => this.onSplitPdfClick("WV")}>
+                            West Virginia
                         </Button>
                     </Grid>
 
