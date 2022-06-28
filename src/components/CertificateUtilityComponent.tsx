@@ -58,6 +58,8 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
         this.fileData = this.fileData.bind(this);
         this.onSplitPdfClick = this.onSplitPdfClick.bind(this);
         this.getTextContentFromAllPages = this.getTextContentFromAllPages.bind(this);
+        this.onClearPdfClick = this.onClearPdfClick.bind(this);
+        this.onClearSignatureClick = this.onClearSignatureClick.bind(this);
     }
 
     async onPDFFileChange(event: any) {
@@ -107,6 +109,21 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
         } else {
             this.splitPdf(pdf, `${state.toUpperCase()}_Split.zip`, true, true, state.toUpperCase())
         }
+    }
+
+    async onClearPdfClick(event: any) {
+        this.setState({
+            fileName: "",
+            document: null,
+            documentRaw: new Uint8Array(),
+            content: []
+        })
+    }
+
+    async onClearSignatureClick(event: any) {
+        this.setState({
+            signaturePicture: new Uint8Array()
+        })
     }
 
     async splitPdf(pdf: PDFDocument, zipFileName: string, extractNames: boolean, addSignature: boolean, state: string) {
@@ -284,6 +301,9 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
                                     </Tooltip>
                                 </label>
                                 {this.fileData()}
+                                <Button variant="outlined" disabled={!this.state.document} color="error" onClick={this.onClearPdfClick}>
+                                Clear PDF
+                                </Button>
                             </Grid>
                             <Divider orientation="vertical" flexItem />
                             <Grid item sx={{ mx: 1.5 }}>
@@ -296,6 +316,9 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
                                     </Tooltip>
                                 </label>
                                 {this.signatureData()}
+                                <Button variant="outlined" disabled={(this.state.signaturePicture.length === 0)} color="error" onClick={this.onClearSignatureClick}>
+                                Clear Signature
+                                </Button>
                             </Grid>
                         </Grid>
                     </Paper>
