@@ -27,7 +27,11 @@ const Input = styled('input')({
 const states : Record<string, StatePDF> = {
     'TX': new StatePDF("Texas", "TX", 38, 0, 0, 0, 0),
     'GA': new StatePDF("Georgia", "GA", 98, 0, 0, 0, 0),
-    'NC': new StatePDF("North Carolina", "NC", 20, 325, 405, 296, 30)
+    'NC': new StatePDF("North Carolina", "NC", 20, 325, 405, 296, 30),
+    'FL': new StatePDF("Florida", "FL", 5, 0, 0, 0, 0),
+    'OK': new StatePDF("Oklahoma", "OK", 5, 0, 0, 0, 0),
+    'DE': new StatePDF("Delaware", "DE", 6, 0, 0, 0, 0),
+    'WV': new StatePDF("West Virginia", "WV", 34, 290, 271, 330, 20)
 }
 
 class CertificateUtility extends Component<CertificateUtilityProps, CertificateUtilityState> {
@@ -179,9 +183,9 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
             let page = await doc.getPage(i)
             let content = await page.getTextContent()
             let items = content.items
-            // content.items.map(token => (token as TextItem).str).join("")
             pdfPagesItems.push(items as TextItem[])
         }
+        console.log(pdfPagesItems)
         return pdfPagesItems
     }
 
@@ -195,18 +199,11 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
     }
 
     fileData() {
-        let signatureUrl = ""
-        if (this.state.signaturePicture) {
-            const blob = new Blob( [ this.state.signaturePicture ] );
-            console.log(blob)
-            signatureUrl = URL.createObjectURL( blob );
-        }
         if (this.state.document) {
             return (
                 <div>
                     <h2>File Details:</h2>
                     <p>Selected File: {this.state.fileName}</p>
-                    <p>Selected Signature: <img src={signatureUrl}></img></p>
                     <p>Total Pages: { this.state.document.getPageCount() }</p>
                     <p>
                         Last Modified:{" "}
@@ -217,6 +214,22 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
             );
         }
     };
+
+    signatureData() {
+        if(this.state.signaturePicture.length != 0) {
+            let signatureUrl = ""
+            if (this.state.signaturePicture) {
+                const blob = new Blob( [ this.state.signaturePicture ] );
+                signatureUrl = URL.createObjectURL( blob );
+            }
+            return (
+                <div>
+                    <p>Selected Signature: <img src={signatureUrl}></img></p>
+                </div>
+            )
+        }
+
+    }
 
     render() {
         return (
@@ -246,6 +259,7 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
                 </Grid>
                 <br/>
                 <Grid item>
+                    {this.signatureData()}
                     {this.fileData()}
                 </Grid>
                 <Grid item>
@@ -264,8 +278,31 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
                     </Button>
                 </Grid>
                 <Grid item>
+                    <Button variant="contained" startIcon={<CallSplit />} onClick={() => this.onSplitPdfClick("FL")}>
+                        Split PDF (FL)
+                        {/* split rename */}
+                    </Button>
+                </Grid>
+                <Grid item>
+                    <Button variant="contained" startIcon={<CallSplit />} onClick={() => this.onSplitPdfClick("OK")}>
+                        Split PDF (OK)
+                        {/* split rename */}
+                    </Button>
+                </Grid>
+                <Grid item>
+                    <Button variant="contained" startIcon={<CallSplit />} onClick={() => this.onSplitPdfClick("DE")}>
+                        Split PDF (DE)
+                        {/* split rename */}
+                    </Button>
+                </Grid>
+                <Grid item>
                     <Button variant="contained" startIcon={<CallSplit />} onClick={() => this.onSplitPdfClick("NC")}>
                         Split PDF + Sign (NC)
+                    </Button>
+                </Grid>
+                <Grid item>
+                    <Button variant="contained" startIcon={<CallSplit />} onClick={() => this.onSplitPdfClick("WV")}>
+                        Split PDF + Sign (WV)
                     </Button>
                 </Grid>
             </Grid>
