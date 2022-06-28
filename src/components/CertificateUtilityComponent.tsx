@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { styled } from '@mui/material/styles';
-import { Grid, Button } from '@mui/material';
+import { Grid, Button, Stack } from '@mui/material';
 import { UploadFile, CallSplit, DriveFileRenameOutline } from '@mui/icons-material';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver'
@@ -24,7 +24,7 @@ const Input = styled('input')({
     display: 'none'
 });
 
-const states : Record<string, StatePDF> = {
+const states: Record<string, StatePDF> = {
     'TX': new StatePDF("Texas", "TX", 38, 0, 0, 0, 0),
     'GA': new StatePDF("Georgia", "GA", 98, 0, 0, 0, 0),
     'NC': new StatePDF("North Carolina", "NC", 20, 325, 405, 296, 30),
@@ -63,7 +63,7 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
                 let typedArray = new Uint8Array(arrayBuffer);
                 let pdfDoc = await PDFDocument.load(typedArray, {
                     updateMetadata: false
-                  })
+                })
                 this.setState({
                     fileName: fileName,
                     document: pdfDoc,
@@ -78,7 +78,7 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
         let signatureFile = event.target.files[0] as File;
         reader.readAsArrayBuffer(signatureFile);
         reader.onloadend = async (e) => {
-            if(e.target?.readyState === FileReader.DONE) {
+            if (e.target?.readyState === FileReader.DONE) {
                 let arrayBuffer = e.target.result as ArrayBuffer;
                 let typedArray = new Uint8Array(arrayBuffer);
                 this.setState({
@@ -90,7 +90,7 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
 
     async onSplitPdfClick(state: string) {
         let pdf = this.state.document;
-        if(!pdf) {
+        if (!pdf) {
             console.error("PDF was not loaded successfully or it's empty. Make sure a PDF was selected...");
             return;
         }
@@ -105,20 +105,20 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
         const pageCount = pdf.getPageCount();
 
         // Get page count for page split
-        if(!pageCount && pageCount === 0) {
+        if (!pageCount && pageCount === 0) {
             console.error("there was an issue reading the page count of PDF or PDF is empty...");
             return;
         }
 
         // Start name extraction if true
-        let lastNames:string[] = []
+        let lastNames: string[] = []
         if (extractNames) {
             let pdfTextContent = await this.getTextContentFromAllPages()
-            if(!pdfTextContent) {
+            if (!pdfTextContent) {
                 console.error("there was an issue getting text content from selected pdf...");
                 return;
             }
-            pdfTextContent.forEach( (page, i)=> {
+            pdfTextContent.forEach((page, i) => {
                 let fullName = page[states[state].getProducerNameIndex()].str
                 let lastName = this.getLastWordInStr(fullName)
                 if (lastName == undefined) {
@@ -129,8 +129,8 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
             })
         }
 
-        if(addSignature) {
-            if(this.state.signaturePicture.length != 0) {
+        if (addSignature) {
+            if (this.state.signaturePicture.length != 0) {
                 let signature = await pdf.embedPng(this.state.signaturePicture)
                 let scaledSignature = signature.scaleToFit(states[state].getSignatureWidthBoundary(), states[state].getSignatureHeightBoundary())
 
@@ -147,12 +147,12 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
 
         let zipFile: JSZip = new JSZip();
 
-        for(let i = 0; i < pageCount; i++) {
+        for (let i = 0; i < pageCount; i++) {
             const subDoc = await PDFDocument.create();
             const [copiedPage] = await subDoc.copyPages(pdf, [i]);
             subDoc.addPage(copiedPage);
             const pdfBytes = await subDoc.save();
-            if(state === "") {
+            if (state === "") {
                 zipFile.file(`${i + 1}.pdf`, pdfBytes);
             } else {
                 zipFile.file(`${lastNames[i]} - ${state}.pdf`, pdfBytes)
@@ -160,8 +160,8 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
 
         }
 
-        zipFile.generateAsync({type: "blob"})
-            .then(function(content) {
+        zipFile.generateAsync({ type: "blob" })
+            .then(function (content) {
                 saveAs(content, zipFileName);
             })
     }
@@ -177,9 +177,9 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
         }
         const doc = await PDFJS.getDocument(pdfRaw).promise;
         const pdfPageCount = pdf.getPageCount()
-        let pdfPagesItems:TextItem[][] = []
+        let pdfPagesItems: TextItem[][] = []
 
-        for(let i = 1; i <= pdfPageCount; i++) {
+        for (let i = 1; i <= pdfPageCount; i++) {
             let page = await doc.getPage(i)
             let content = await page.getTextContent()
             let items = content.items
@@ -203,109 +203,135 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
             return (
                 <div>
                     <h2>File Details:</h2>
-                    <p>Selected File: {this.state.fileName}</p>
-                    <p>Total Pages: { this.state.document.getPageCount() }</p>
+                    <p><b>Selected File:</b> {this.state.fileName}</p>
+                    <p><b>Total Pages:</b> {this.state.document.getPageCount()}</p>
                     <p>
-                        Last Modified:{" "}
-                        { this.state.document.getModificationDate()?.toDateString() }
+                        <b>Last Modified:</b> {" "}
+                        {this.state.document.getModificationDate()?.toDateString()}
                     </p>
 
+                </div>
+            );
+        } else {
+            return (
+                <div>
+                    <h2>File Details:</h2>
+                    <p>No PDF selected</p>
                 </div>
             );
         }
     };
 
     signatureData() {
-        if(this.state.signaturePicture.length != 0) {
+        if (this.state.signaturePicture.length != 0) {
             let signatureUrl = ""
             if (this.state.signaturePicture) {
-                const blob = new Blob( [ this.state.signaturePicture ] );
-                signatureUrl = URL.createObjectURL( blob );
+                const blob = new Blob([this.state.signaturePicture]);
+                signatureUrl = URL.createObjectURL(blob);
+
+                return (
+                    <div>
+                        <h2>Signature:</h2>
+                        <img src={signatureUrl}></img>
+                    </div>
+                )
             }
+        } else {
             return (
                 <div>
-                    <p>Selected Signature: <img src={signatureUrl}></img></p>
+                    <h2>Signature:</h2>
+                    <p>No signature selected</p>
                 </div>
             )
         }
-
     }
 
     render() {
         return (
-            <Grid
-                id='CertificateUtility'
-                container
-                direction='column'
-                alignItems='center'
-                justifyContent='center'
-                spacing={1}
-            >
-                <Grid item xs>
-                    <label htmlFor="pdf-upload-button">
-                        <Input accept=".pdf" id="pdf-upload-button" type="file" onChange={this.onPDFFileChange} />
-                        <Button variant="contained" component="span" startIcon={<UploadFile />}>
-                            Select PDF
+            <div>
+                <Grid
+                    id='CertificateUtility'
+                    container
+                    direction='column'
+                    alignItems="flex-start"
+                    justifyContent='flex-start'
+                    spacing={1}
+                    sx={{ m: 1 }}
+                >
+                    <Grid
+                        id='CertificateUtilityDetails'
+                        container
+                        spacing={1}
+                        sx={{ m: 1 }}
+                    >
+                        <Grid item>
+                            {this.fileData()}
+                        </Grid>
+                        <Grid item>
+                            {this.signatureData()}
+                        </Grid>
+
+                    </Grid>
+                    <Grid item xs>
+                        <label htmlFor="pdf-upload-button">
+                            <Input accept=".pdf" id="pdf-upload-button" type="file" onChange={this.onPDFFileChange} />
+                            <Button variant="contained" component="span" startIcon={<UploadFile />}>
+                                Select PDF
+                            </Button>
+                        </label>
+                    </Grid>
+                    <Grid item xs>
+                        <label htmlFor="signature-upload-button">
+                            <Input accept=".png" id="signature-upload-button" type="file" onChange={this.onSignatureFileChange} />
+                            <Button variant="contained" component="span" startIcon={<DriveFileRenameOutline />}>
+                                Select Signature
+                            </Button>
+                        </label>
+                    </Grid>
+                    <hr/>
+                    <Grid item>
+                        <Button variant="contained" startIcon={<CallSplit />} onClick={() => this.onSplitPdfClick("")}>
+                            Split PDF
                         </Button>
-                    </label>
-                </Grid>
-                <Grid item xs>
-                    <label htmlFor="signature-upload-button">
-                        <Input accept=".png" id="signature-upload-button" type="file" onChange={this.onSignatureFileChange} />
-                        <Button variant="contained" component="span" startIcon={<DriveFileRenameOutline />}>
-                            Select Signature
+                    </Grid>
+                    <Grid item>
+                        <Button variant="contained" startIcon={<CallSplit />} onClick={() => this.onSplitPdfClick("TX")}>
+                            Split PDF (TX)
                         </Button>
-                    </label>
+                    </Grid>
+                    <Grid item>
+                        <Button variant="contained" startIcon={<CallSplit />} onClick={() => this.onSplitPdfClick("GA")}>
+                            Split PDF (GA)
+                        </Button>
+                    </Grid>
+                    <Grid item>
+                        <Button variant="contained" startIcon={<CallSplit />} onClick={() => this.onSplitPdfClick("FL")}>
+                            Split PDF (FL)
+                        </Button>
+                    </Grid>
+                    <Grid item>
+                        <Button variant="contained" startIcon={<CallSplit />} onClick={() => this.onSplitPdfClick("OK")}>
+                            Split PDF (OK)
+                        </Button>
+                    </Grid>
+                    <Grid item>
+                        <Button variant="contained" startIcon={<CallSplit />} onClick={() => this.onSplitPdfClick("DE")}>
+                            Split PDF (DE)
+                        </Button>
+                    </Grid>
+                    <Grid item>
+                        <Button variant="contained" startIcon={<CallSplit />} onClick={() => this.onSplitPdfClick("NC")}>
+                            Split PDF + Sign (NC)
+                        </Button>
+                    </Grid>
+                    <Grid item>
+                        <Button variant="contained" startIcon={<CallSplit />} onClick={() => this.onSplitPdfClick("WV")}>
+                            Split PDF + Sign (WV)
+                        </Button>
+                    </Grid>
+
                 </Grid>
-                <br/>
-                <Grid item>
-                    {this.signatureData()}
-                    {this.fileData()}
-                </Grid>
-                <Grid item>
-                    <Button variant="contained" startIcon={<CallSplit />} onClick={() => this.onSplitPdfClick("")}>
-                        Split PDF
-                    </Button>
-                </Grid>
-                <Grid item>
-                    <Button variant="contained" startIcon={<CallSplit />} onClick={() => this.onSplitPdfClick("TX")}>
-                        Split PDF (TX)
-                    </Button>
-                </Grid>
-                <Grid item>
-                    <Button variant="contained" startIcon={<CallSplit />} onClick={() => this.onSplitPdfClick("GA")}>
-                        Split PDF (GA)
-                    </Button>
-                </Grid>
-                <Grid item>
-                    <Button variant="contained" startIcon={<CallSplit />} onClick={() => this.onSplitPdfClick("FL")}>
-                        Split PDF (FL)
-                        {/* split rename */}
-                    </Button>
-                </Grid>
-                <Grid item>
-                    <Button variant="contained" startIcon={<CallSplit />} onClick={() => this.onSplitPdfClick("OK")}>
-                        Split PDF (OK)
-                        {/* split rename */}
-                    </Button>
-                </Grid>
-                <Grid item>
-                    <Button variant="contained" startIcon={<CallSplit />} onClick={() => this.onSplitPdfClick("DE")}>
-                        Split PDF (DE)
-                        {/* split rename */}
-                    </Button>
-                </Grid>
-                <Grid item>
-                    <Button variant="contained" startIcon={<CallSplit />} onClick={() => this.onSplitPdfClick("NC")}>
-                        Split PDF + Sign (NC)
-                    </Button>
-                </Grid>
-                <Grid item>
-                    <Button variant="contained" startIcon={<CallSplit />} onClick={() => this.onSplitPdfClick("WV")}>
-                        Split PDF + Sign (WV)
-                    </Button>
-                </Grid>
-            </Grid>
+            </div>
 
         )
     }
