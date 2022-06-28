@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './CertificateUtilityComponent.css';
 import { styled } from '@mui/material/styles';
-import { Grid, Button, Divider, Paper } from '@mui/material';
+import { Grid, Button, Divider, Paper, Tooltip } from '@mui/material';
 import { UploadFile, CallSplit, DriveFileRenameOutline } from '@mui/icons-material';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver'
@@ -33,6 +33,13 @@ const states: Record<string, StatePDF> = {
     'OK': new StatePDF("Oklahoma", "OK", 5, 0, 0, 0, 0),
     'DE': new StatePDF("Delaware", "DE", 6, 0, 0, 0, 0),
     'WV': new StatePDF("West Virginia", "WV", 34, 290, 271, 330, 20)
+}
+
+const TOOL_TIPS : Record<string,string> = {
+    "SELECT_PDF": "Select PDF to work on! (Enables 'Split PDF' and 'Split and Rename PDF' sections)",
+    "SELECT_SIGNATURE": "Select png image of your signature to inject into PDF. (Enables 'Split, Rename, and Sign PDF' section)",
+    "SPLIT_PDF_BUTTON_DISABLE": "You must select a PDF in order to use this button!",
+    "SPLIT_AND_SIGN_PDF_BUTTON_DISABLE": "You must select a PDF and a Signature to use this button!"
 }
 
 class CertificateUtility extends Component<CertificateUtilityProps, CertificateUtilityState> {
@@ -270,31 +277,36 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
 
                                 <label htmlFor="pdf-upload-button">
                                     <Input accept=".pdf" id="pdf-upload-button" type="file" onChange={this.onPDFFileChange} />
-                                    <Button variant="contained" component="span" startIcon={<UploadFile />}>
-                                        Select PDF
-                                    </Button>
+                                    <Tooltip title={TOOL_TIPS["SELECT_PDF"]} arrow>
+                                        <Button variant="contained" component="span" startIcon={<UploadFile />}>
+                                            Select PDF
+                                        </Button>
+                                    </Tooltip>
                                 </label>
-
                                 {this.fileData()}
                             </Grid>
                             <Divider orientation="vertical" flexItem />
                             <Grid item sx={{ mx: 1.5 }}>
                                 <label htmlFor="signature-upload-button">
                                     <Input accept=".png" id="signature-upload-button" type="file" onChange={this.onSignatureFileChange} />
-                                    <Button variant="contained" component="span" startIcon={<DriveFileRenameOutline />}>
-                                        Select Signature
-                                    </Button>
+                                    <Tooltip title={TOOL_TIPS["SELECT_SIGNATURE"]} arrow>
+                                        <Button variant="contained" component="span" startIcon={<DriveFileRenameOutline />}>
+                                            Select Signature
+                                        </Button>
+                                    </Tooltip>
                                 </label>
                                 {this.signatureData()}
                             </Grid>
                         </Grid>
                     </Paper>
+
                     <h2>Split PDF</h2>
                     <Grid item>
                         <Button variant="contained" startIcon={<CallSplit />} disabled={!this.state.document} onClick={() => this.onSplitPdfClick("")}>
                             Split
                         </Button>
                     </Grid>
+
                     <h2>Split and Rename PDF</h2>
                     <Grid item>
                         <Button fullWidth variant="contained" startIcon={<CallSplit />} disabled={!this.state.document} onClick={() => this.onSplitPdfClick("DE")}>
