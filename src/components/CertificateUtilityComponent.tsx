@@ -291,45 +291,45 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
                     </Paper>
                     <h2>Split PDF</h2>
                     <Grid item>
-                        <Button variant="contained" startIcon={<CallSplit />} onClick={() => this.onSplitPdfClick("")}>
+                        <Button variant="contained" startIcon={<CallSplit />} disabled={!this.state.document} onClick={() => this.onSplitPdfClick("")}>
                             Split
                         </Button>
                     </Grid>
                     <h2>Split and Rename PDF</h2>
                     <Grid item>
-                        <Button fullWidth variant="contained" startIcon={<CallSplit />} onClick={() => this.onSplitPdfClick("DE")}>
+                        <Button fullWidth variant="contained" startIcon={<CallSplit />} disabled={!this.state.document} onClick={() => this.onSplitPdfClick("DE")}>
                             Delaware
                         </Button>
                     </Grid>
                     <Grid item>
-                        <Button fullWidth variant="contained" startIcon={<CallSplit />} onClick={() => this.onSplitPdfClick("FL")}>
+                        <Button fullWidth variant="contained" startIcon={<CallSplit />} disabled={!this.state.document} onClick={() => this.onSplitPdfClick("FL")}>
                             Florida
                         </Button>
                     </Grid>
                     <Grid item>
-                        <Button variant="contained" startIcon={<CallSplit />} onClick={() => this.onSplitPdfClick("GA")}>
+                        <Button variant="contained" startIcon={<CallSplit />} disabled={!this.state.document} onClick={() => this.onSplitPdfClick("GA")}>
                             Georgia
                         </Button>
                     </Grid>
                     <Grid item>
-                        <Button variant="contained" startIcon={<CallSplit />} onClick={() => this.onSplitPdfClick("OK")}>
+                        <Button variant="contained" startIcon={<CallSplit />} disabled={!this.state.document} onClick={() => this.onSplitPdfClick("OK")}>
                             Oklahoma
                         </Button>
                     </Grid>
                     <Grid item>
-                        <Button variant="contained" startIcon={<CallSplit />} onClick={() => this.onSplitPdfClick("TX")}>
+                        <Button variant="contained" startIcon={<CallSplit />} disabled={!this.state.document} onClick={() => this.onSplitPdfClick("TX")}>
                             Texas
                         </Button>
                     </Grid>
 
                     <h2>Split, Rename, and Sign PDF</h2>
                     <Grid item>
-                        <Button variant="contained" startIcon={<DriveFileRenameOutline />} onClick={() => this.onSplitPdfClick("NC")}>
+                        <Button variant="contained" startIcon={<DriveFileRenameOutline />} disabled={(this.state.signaturePicture.length === 0)} onClick={() => this.onSplitPdfClick("NC")}>
                             North Carolina
                         </Button>
                     </Grid>
                     <Grid item>
-                        <Button variant="contained" startIcon={<DriveFileRenameOutline />} onClick={() => this.onSplitPdfClick("WV")}>
+                        <Button variant="contained" startIcon={<DriveFileRenameOutline />} disabled={(this.state.signaturePicture.length === 0)} onClick={() => this.onSplitPdfClick("WV")}>
                             West Virginia
                         </Button>
                     </Grid>
