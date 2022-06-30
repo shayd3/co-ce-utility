@@ -8,7 +8,6 @@ import { saveAs } from 'file-saver'
 import { PDFDocument } from 'pdf-lib'; // PDF Split, as well as modification
 import * as PDFJS from "pdfjs-dist"; // Text Extraction
 import { TextItem } from 'pdfjs-dist/types/src/display/api';
-import { read } from 'fs';
 import { StatePDF } from '../models/StatePDF';
 PDFJS.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${PDFJS.version}/pdf.worker.js`;
 
@@ -146,7 +145,7 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
             pdfTextContent.forEach((page, i) => {
                 let fullName = page[states[state].getProducerNameIndex()].str
                 let lastName = this.getLastWordInStr(fullName)
-                if (lastName == undefined) {
+                if (lastName === undefined) {
                     console.error(`there was an issue getting last name from page ${i + 1}...`)
                     return
                 }
@@ -155,7 +154,7 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
         }
 
         if (addSignature) {
-            if (this.state.signaturePicture.length != 0) {
+            if (this.state.signaturePicture.length !== 0) {
                 let signature = await pdf.embedPng(this.state.signaturePicture)
                 let scaledSignature = signature.scaleToFit(states[state].getSignatureWidthBoundary(), states[state].getSignatureHeightBoundary())
 
@@ -248,7 +247,7 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
     };
 
     signatureData() {
-        if (this.state.signaturePicture.length != 0) {
+        if (this.state.signaturePicture.length !== 0) {
             let signatureUrl = ""
             if (this.state.signaturePicture) {
                 const blob = new Blob([this.state.signaturePicture]);
@@ -257,7 +256,7 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
                 return (
                     <div>
                         <h2>Signature:</h2>
-                        <img src={signatureUrl}></img>
+                        <img src={signatureUrl} alt="signature" id="SignatureImage"></img>
                     </div>
                 )
             }
@@ -291,7 +290,6 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
                             sx={{ m: 1 }}
                         >
                             <Grid item sx={{ mx: 1.5 }}>
-
                                 <label htmlFor="pdf-upload-button">
                                     <Input accept=".pdf" id="pdf-upload-button" type="file" onChange={this.onPDFFileChange} />
                                     <Tooltip title={TOOL_TIPS["SELECT_PDF"]} arrow>
@@ -305,6 +303,7 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
                                 Clear PDF
                                 </Button>
                             </Grid>
+
                             <Divider orientation="vertical" flexItem />
                             <Grid item sx={{ mx: 1.5 }}>
                                 <label htmlFor="signature-upload-button">
@@ -322,13 +321,6 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
                             </Grid>
                         </Grid>
                     </Paper>
-
-                    <h2>Split PDF</h2>
-                    <Grid item>
-                        <Button variant="contained" startIcon={<CallSplit />} disabled={!this.state.document} onClick={() => this.onSplitPdfClick("")}>
-                            Split
-                        </Button>
-                    </Grid>
 
                     <h2>Split and Rename PDF</h2>
                     <Grid item>
