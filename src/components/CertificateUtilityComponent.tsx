@@ -8,7 +8,6 @@ import { saveAs } from 'file-saver'
 import { PDFDocument } from 'pdf-lib'; // PDF Split, as well as modification
 import * as PDFJS from "pdfjs-dist"; // Text Extraction
 import { TextItem } from 'pdfjs-dist/types/src/display/api';
-import { read } from 'fs';
 import { StatePDF } from '../models/StatePDF';
 PDFJS.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${PDFJS.version}/pdf.worker.js`;
 
@@ -146,7 +145,7 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
             pdfTextContent.forEach((page, i) => {
                 let fullName = page[states[state].getProducerNameIndex()].str
                 let lastName = this.getLastWordInStr(fullName)
-                if (lastName == undefined) {
+                if (lastName === undefined) {
                     console.error(`there was an issue getting last name from page ${i + 1}...`)
                     return
                 }
@@ -155,7 +154,7 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
         }
 
         if (addSignature) {
-            if (this.state.signaturePicture.length != 0) {
+            if (this.state.signaturePicture.length !== 0) {
                 let signature = await pdf.embedPng(this.state.signaturePicture)
                 let scaledSignature = signature.scaleToFit(states[state].getSignatureWidthBoundary(), states[state].getSignatureHeightBoundary())
 
@@ -248,7 +247,7 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
     };
 
     signatureData() {
-        if (this.state.signaturePicture.length != 0) {
+        if (this.state.signaturePicture.length !== 0) {
             let signatureUrl = ""
             if (this.state.signaturePicture) {
                 const blob = new Blob([this.state.signaturePicture]);
