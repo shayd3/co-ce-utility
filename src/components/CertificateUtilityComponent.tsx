@@ -323,13 +323,6 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
                         </Grid>
                     </Paper>
 
-                    <h2>Split PDF</h2>
-                    <Grid item>
-                        <Button variant="contained" startIcon={<CallSplit />} disabled={!this.state.document} onClick={() => this.onSplitPdfClick("")}>
-                            Split
-                        </Button>
-                    </Grid>
-
                     <h2>Split and Rename PDF</h2>
                     <Grid item>
                         <Button fullWidth variant="contained" startIcon={<CallSplit />} disabled={!this.state.document} onClick={() => this.onSplitPdfClick("DE")}>
