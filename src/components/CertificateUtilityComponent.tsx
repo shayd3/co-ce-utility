@@ -29,7 +29,7 @@ const states: Record<string, StatePDF> = {
     'GA': new StatePDF("Georgia", "GA", 98, 0, 0, 0, 0),
     'NC': new StatePDF("North Carolina", "NC", 20, 325, 405, 296, 30),
     'FL': new StatePDF("Florida", "FL", 5, 0, 0, 0, 0),
-    'OK': new StatePDF("Oklahoma", "OK", 5, 0, 0, 0, 0),
+    'OK': new StatePDF("Oklahoma", "OK", 6, 0, 0, 0, 0),
     'DE': new StatePDF("Delaware", "DE", 6, 0, 0, 0, 0),
     'WV': new StatePDF("West Virginia", "WV", 34, 290, 271, 330, 20)
 }
@@ -247,19 +247,18 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
     };
 
     signatureData() {
-        if (this.state.signaturePicture.length !== 0) {
+        if (this.state.signaturePicture && this.state.signaturePicture.length !== 0) {
             let signatureUrl = ""
-            if (this.state.signaturePicture) {
-                const blob = new Blob([this.state.signaturePicture]);
-                signatureUrl = URL.createObjectURL(blob);
+            const blob = new Blob([this.state.signaturePicture]);
+            signatureUrl = URL.createObjectURL(blob);
 
-                return (
-                    <div>
-                        <h2>Signature:</h2>
-                        <img src={signatureUrl} alt="signature" id="SignatureImage"></img>
-                    </div>
-                )
-            }
+            return (
+                <div>
+                    <h2>Signature:</h2>
+                    <img src={signatureUrl} alt="signature" id="SignatureImage"></img>
+                </div>
+            )
+
         } else {
             return (
                 <div>
