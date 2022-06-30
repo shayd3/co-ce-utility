@@ -257,7 +257,7 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
                 return (
                     <div>
                         <h2>Signature:</h2>
-                        <img src={signatureUrl}></img>
+                        <img src={signatureUrl} alt="signature" id="SignatureImage"></img>
                     </div>
                 )
             }
@@ -291,7 +291,6 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
                             sx={{ m: 1 }}
                         >
                             <Grid item sx={{ mx: 1.5 }}>
-
                                 <label htmlFor="pdf-upload-button">
                                     <Input accept=".pdf" id="pdf-upload-button" type="file" onChange={this.onPDFFileChange} />
                                     <Tooltip title={TOOL_TIPS["SELECT_PDF"]} arrow>
@@ -305,6 +304,7 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
                                 Clear PDF
                                 </Button>
                             </Grid>
+
                             <Divider orientation="vertical" flexItem />
                             <Grid item sx={{ mx: 1.5 }}>
                                 <label htmlFor="signature-upload-button">
