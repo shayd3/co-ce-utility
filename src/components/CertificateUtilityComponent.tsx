@@ -25,15 +25,15 @@ const Input = styled('input')({
 });
 
 const states: Record<string, StatePDF> = {
-    'TX': new StatePDF("Texas", "TX", 38, 0, 0, 0, 0),
-    'GA': new StatePDF("Georgia", "GA", 98, 0, 0, 0, 0),
-    'FL': new StatePDF("Florida", "FL", 5, 0, 0, 0, 0),
-    'OK': new StatePDF("Oklahoma", "OK", 6, 0, 0, 0, 0),
     'DE': new StatePDF("Delaware", "DE", 6, 0, 0, 0, 0),
+    'FL': new StatePDF("Florida", "FL", 5, 0, 0, 0, 0),
+    'GA': new StatePDF("Georgia", "GA", 98, 0, 0, 0, 0),
     'IL': new StatePDF("Illinois", "IL", 6, 0, 0, 0, 0),
-    'OH': new StatePDF("Ohio", "OH", 6, 0, 0, 0, 0),
-    'PA': new StatePDF("Pennsylvania", "PA", 6, 0, 0, 0, 0),
     'NC': new StatePDF("North Carolina", "NC", 20, 325, 405, 296, 30),
+    'OH': new StatePDF("Ohio", "OH", 6, 0, 0, 0, 0),
+    'OK': new StatePDF("Oklahoma", "OK", 6, 0, 0, 0, 0),
+    'PA': new StatePDF("Pennsylvania", "PA", 6, 0, 0, 0, 0),
+    'TX': new StatePDF("Texas", "TX", 38, 0, 0, 0, 0),
     'WV': new StatePDF("West Virginia", "WV", 34, 290, 271, 330, 20)
 }
 
