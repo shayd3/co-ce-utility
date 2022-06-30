@@ -247,7 +247,7 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
     };
 
     signatureData() {
-        if (this.state.signaturePicture.length !== 0) {
+        if (this.state.signaturePicture && this.state.signaturePicture.length !== 0) {
             let signatureUrl = ""
             const blob = new Blob([this.state.signaturePicture]);
             signatureUrl = URL.createObjectURL(blob);
