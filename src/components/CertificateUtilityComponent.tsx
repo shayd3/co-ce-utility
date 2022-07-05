@@ -25,7 +25,7 @@ const Input = styled('input')({
 });
 
 const states: Record<string, StatePDF> = {
-    'AZ': new StatePDF("Arizona", "AZ", 34, 290, 271, 330, 20),
+    'AZ': new StatePDF("Arizona", "AZ", 57, 125, 310, 375, 20),
     'CA': new StatePDF("California", "CA", 34, 290, 271, 330, 20),
     'DE': new StatePDF("Delaware", "DE", 6, 0, 0, 0, 0),
     'FL': new StatePDF("Florida", "FL", 5, 0, 0, 0, 0),
