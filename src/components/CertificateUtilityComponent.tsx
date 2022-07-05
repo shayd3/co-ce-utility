@@ -25,15 +25,19 @@ const Input = styled('input')({
 });
 
 const states: Record<string, StatePDF> = {
+    'AZ': new StatePDF("Arizona", "AZ", 34, 290, 271, 330, 20),
+    'CA': new StatePDF("California", "CA", 34, 290, 271, 330, 20),
     'DE': new StatePDF("Delaware", "DE", 6, 0, 0, 0, 0),
     'FL': new StatePDF("Florida", "FL", 5, 0, 0, 0, 0),
     'GA': new StatePDF("Georgia", "GA", 98, 0, 0, 0, 0),
     'IL': new StatePDF("Illinois", "IL", 6, 0, 0, 0, 0),
+    'NV': new StatePDF("Nevada", "NV", 20, 325, 405, 296, 30),
     'NC': new StatePDF("North Carolina", "NC", 20, 325, 405, 296, 30),
     'OH': new StatePDF("Ohio", "OH", 6, 0, 0, 0, 0),
     'OK': new StatePDF("Oklahoma", "OK", 6, 0, 0, 0, 0),
     'PA': new StatePDF("Pennsylvania", "PA", 6, 0, 0, 0, 0),
     'TX': new StatePDF("Texas", "TX", 38, 0, 0, 0, 0),
+    'VA': new StatePDF("Virginia", "VA", 34, 290, 271, 330, 20),
     'WV': new StatePDF("West Virginia", "WV", 34, 290, 271, 330, 20)
 }
 
@@ -369,8 +373,28 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
 
                     <h2>Split, Rename, and Sign PDF</h2>
                     <Grid item>
+                        <Button variant="contained" startIcon={<DriveFileRenameOutline />} disabled={(this.state.signaturePicture.length === 0)} onClick={() => this.onSplitPdfClick("AZ")}>
+                            Arizona
+                        </Button>
+                    </Grid>
+                    <Grid item>
+                        <Button variant="contained" startIcon={<DriveFileRenameOutline />} disabled={(this.state.signaturePicture.length === 0)} onClick={() => this.onSplitPdfClick("CA")}>
+                            California
+                        </Button>
+                    </Grid>
+                    <Grid item>
+                        <Button variant="contained" startIcon={<DriveFileRenameOutline />} disabled={(this.state.signaturePicture.length === 0)} onClick={() => this.onSplitPdfClick("NV")}>
+                            Nevada
+                        </Button>
+                    </Grid>
+                    <Grid item>
                         <Button variant="contained" startIcon={<DriveFileRenameOutline />} disabled={(this.state.signaturePicture.length === 0)} onClick={() => this.onSplitPdfClick("NC")}>
                             North Carolina
+                        </Button>
+                    </Grid>
+                    <Grid item>
+                        <Button variant="contained" startIcon={<DriveFileRenameOutline />} disabled={(this.state.signaturePicture.length === 0)} onClick={() => this.onSplitPdfClick("VA")}>
+                            Virginia
                         </Button>
                     </Grid>
                     <Grid item>
