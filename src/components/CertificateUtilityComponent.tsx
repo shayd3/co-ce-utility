@@ -37,7 +37,7 @@ const states: Record<string, StatePDF> = {
     'OK': new StatePDF("Oklahoma", "OK", 6, 0, 0, 0, 0),
     'PA': new StatePDF("Pennsylvania", "PA", 6, 0, 0, 0, 0),
     'TX': new StatePDF("Texas", "TX", 38, 0, 0, 0, 0),
-    'VA': new StatePDF("Virginia", "VA", 34, 290, 271, 330, 20),
+    'VA': new StatePDF("Virginia", "VA", 48, 290, 271, 0, 0),
     'WV': new StatePDF("West Virginia", "WV", 34, 290, 271, 330, 20)
 }
 
@@ -370,6 +370,11 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
                             Texas
                         </Button>
                     </Grid>
+                    <Grid item>
+                        <Button variant="contained" startIcon={<CallSplit />} disabled={!this.state.document} onClick={() => this.onSplitPdfClick("VA")}>
+                            Virginia
+                        </Button>
+                    </Grid>
 
                     <h2>Split, Rename, and Sign PDF</h2>
                     <Grid item>
@@ -390,11 +395,6 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
                     <Grid item>
                         <Button variant="contained" startIcon={<DriveFileRenameOutline />} disabled={(this.state.signaturePicture.length === 0)} onClick={() => this.onSplitPdfClick("NC")}>
                             North Carolina
-                        </Button>
-                    </Grid>
-                    <Grid item>
-                        <Button variant="contained" startIcon={<DriveFileRenameOutline />} disabled={(this.state.signaturePicture.length === 0)} onClick={() => this.onSplitPdfClick("VA")}>
-                            Virginia
                         </Button>
                     </Grid>
                     <Grid item>
