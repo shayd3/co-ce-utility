@@ -31,7 +31,7 @@ const states: Record<string, StatePDF> = {
     'FL': new StatePDF("Florida", "FL", 5, 0, 0, 0, 0),
     'GA': new StatePDF("Georgia", "GA", 98, 0, 0, 0, 0),
     'IL': new StatePDF("Illinois", "IL", 6, 0, 0, 0, 0),
-    'NV': new StatePDF("Nevada", "NV", 20, 325, 405, 296, 30),
+    'NV': new StatePDF("Nevada", "NV", 89, 75, 203, 310, 20),
     'NC': new StatePDF("North Carolina", "NC", 20, 325, 405, 296, 30),
     'OH': new StatePDF("Ohio", "OH", 6, 0, 0, 0, 0),
     'OK': new StatePDF("Oklahoma", "OK", 6, 0, 0, 0, 0),
