@@ -75,6 +75,11 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
         this.onClearSignatureClick = this.onClearSignatureClick.bind(this);
     }
 
+    /**
+     * onPDFFileChange() - Reads the PDF file and stores it in the state
+     * @param event
+     * @returns
+     */
     async onPDFFileChange(event: any) {
         let reader = new FileReader();
         let file = event.target.files[0] as File;
@@ -96,6 +101,11 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
         }
     }
 
+    /**
+     * onSignatureFileChange() - Reads the signature file and stores it in the state
+     *
+     * @param event
+     */
     async onSignatureFileChange(event: any) {
         let reader = new FileReader();
         let signatureFile = event.target.files[0] as File;
@@ -111,6 +121,13 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
         }
     }
 
+    /**
+     * onSplitPdfClick() - Splits PDF into individual pages and zips them into a single file
+     *
+     * @param states
+     * @param state
+     * @returns
+     */
     async onSplitPdfClick(states: Record<string, StatePDF>, state: string) {
         let pdf = this.state.document;
         if (!pdf) {
@@ -124,6 +141,11 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
         }
     }
 
+    /**
+     * onClearPdfClick() - Clears PDF from state
+     *
+     * @param event
+     */
     async onClearPdfClick(event: any) {
         this.setState({
             fileName: "",
@@ -133,12 +155,29 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
         })
     }
 
+    /**
+     * onClearSignatureClick() - Clears signature picture from state
+     *
+     * @param event
+     */
     async onClearSignatureClick(event: any) {
         this.setState({
             signaturePicture: new Uint8Array()
         })
     }
 
+    /**
+     * splitPdf() - Splits PDF into individual pages and adds signature to each page
+     * if applicable. Also extracts names from PDF if applicable.
+     *
+     * @param states
+     * @param pdf
+     * @param zipFileName
+     * @param extractNames
+     * @param addSignature
+     * @param state
+     * @returns
+     */
     async splitPdf(states: Record<string, StatePDF>, pdf: PDFDocument, zipFileName: string, extractNames: boolean, addSignature: boolean, state: string) {
         const pageCount = pdf.getPageCount();
 
@@ -260,6 +299,9 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
         return /(?:[JS]R\.?|I|III?|IV)?$/.test(str.toUpperCase())
     }
 
+    /**
+     * fileData() returns the file data of the selected pdf
+     */
     fileData() {
         if (this.state.document) {
             return (
@@ -284,6 +326,12 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
         }
     };
 
+    /**
+     * signatureData() returns the signature data of the selected signature
+     * if no signature is selected, it returns a message saying no signature is selected
+     * @returns
+     * @memberof CertificateUtility
+     */
     signatureData() {
         if (this.state.signaturePicture && this.state.signaturePicture.length !== 0) {
             let signatureUrl = ""
