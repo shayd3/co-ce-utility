@@ -36,7 +36,7 @@ const states: Record<string, StatePDF> = {
     'OH': new StatePDF("Ohio", "OH", 6, 0, 0, 0, 0),
     'OK': new StatePDF("Oklahoma", "OK", 6, 0, 0, 0, 0),
     'PA': new StatePDF("Pennsylvania", "PA", 6, 0, 0, 0, 0),
-    'TX': new StatePDF("Texas", "TX", 38, 0, 0, 0, 0),
+    'TX': new StatePDF("Texas", "TX", 39, 0, 0, 0, 0),
     'VA': new StatePDF("Virginia", "VA", 48, 290, 271, 0, 0),
     'WV': new StatePDF("West Virginia", "WV", 34, 290, 271, 330, 20)
 }
@@ -227,6 +227,10 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
 
     getLastWordInStr(str: string) {
         return str.split(" ").pop()
+    }
+
+    matchNameSuffix(str: string) {
+        return str.match(/(?:[JS]r\.?|I|III?|IV)?$/)
     }
 
     fileData() {
