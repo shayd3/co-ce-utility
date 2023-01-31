@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "co-ce-utility",
+  "name": "Cozen O'Connor Certificate Utility",
   "icons": [
     {
       "src": "favicon.ico",
