@@ -24,20 +24,27 @@ const Input = styled('input')({
     display: 'none'
 });
 
-const states: Record<string, StatePDF> = {
-    'AZ': new StatePDF("Arizona", "AZ", 57, 125, 310, 375, 20),
-    'CA': new StatePDF("California", "CA", 41, 132, 185, 330, 20),
+const splitRenameStates: Record<string, StatePDF> = {
     'DE': new StatePDF("Delaware", "DE", 6, 0, 0, 0, 0),
     'FL': new StatePDF("Florida", "FL", 5, 0, 0, 0, 0),
     'GA': new StatePDF("Georgia", "GA", 98, 0, 0, 0, 0),
     'IL': new StatePDF("Illinois", "IL", 6, 0, 0, 0, 0),
-    'NV': new StatePDF("Nevada", "NV", 89, 75, 203, 310, 20),
-    'NC': new StatePDF("North Carolina", "NC", 20, 325, 405, 296, 30),
     'OH': new StatePDF("Ohio", "OH", 6, 0, 0, 0, 0),
     'OK': new StatePDF("Oklahoma", "OK", 6, 0, 0, 0, 0),
     'PA': new StatePDF("Pennsylvania", "PA", 6, 0, 0, 0, 0),
     'TX': new StatePDF("Texas", "TX", 39, 0, 0, 0, 0),
-    'VA': new StatePDF("Virginia", "VA", 48, 290, 271, 0, 0),
+    'VA': new StatePDF("Virginia", "VA", 48, 290, 271, 0, 0)
+}
+
+const splitRenameSignStates : Record<string, StatePDF> = {
+    'AZ': new StatePDF("Arizona", "AZ", 57, 125, 310, 375, 20),
+    'AR': new StatePDF("Arkansas", "AR", 6, 0, 0, 0, 0),
+    'CA': new StatePDF("California", "CA", 41, 132, 185, 330, 20),
+    'IA': new StatePDF("Iowa", "IA", 6, 0, 0, 0, 0),
+    'NE': new StatePDF("Nebraska", "NE", 6, 0, 0, 0, 0),
+    'NV': new StatePDF("Nevada", "NV", 89, 75, 203, 310, 20),
+    'NC': new StatePDF("North Carolina", "NC", 20, 325, 405, 296, 30),
+    'WA': new StatePDF("Washington", "WA", 6, 0, 0, 0, 0),
     'WV': new StatePDF("West Virginia", "WV", 34, 290, 271, 330, 20)
 }
 
@@ -104,16 +111,16 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
         }
     }
 
-    async onSplitPdfClick(state: string) {
+    async onSplitPdfClick(states: Record<string, StatePDF>, state: string) {
         let pdf = this.state.document;
         if (!pdf) {
             console.error("PDF was not loaded successfully or it's empty. Make sure a PDF was selected...");
             return;
         }
         if (state === "") {
-            this.splitPdf(pdf, "PDFSplit.zip", false, false, "")
+            this.splitPdf(states, pdf, "PDFSplit.zip", false, false, "")
         } else {
-            this.splitPdf(pdf, `${state.toUpperCase()}_Split.zip`, true, true, state.toUpperCase())
+            this.splitPdf(states, pdf, `${state.toUpperCase()}_Split.zip`, true, true, state.toUpperCase())
         }
     }
 
@@ -132,7 +139,7 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
         })
     }
 
-    async splitPdf(pdf: PDFDocument, zipFileName: string, extractNames: boolean, addSignature: boolean, state: string) {
+    async splitPdf(states: Record<string, StatePDF>, pdf: PDFDocument, zipFileName: string, extractNames: boolean, addSignature: boolean, state: string) {
         const pageCount = pdf.getPageCount();
 
         // Get page count for page split
@@ -334,78 +341,22 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
 
 
                     <h2>Split and Rename PDF</h2>
-                    <Grid item>
-                        <Button fullWidth variant="contained" startIcon={<CallSplit />} disabled={!this.state.document} onClick={() => this.onSplitPdfClick("DE")}>
-                            Delaware
-                        </Button>
-                    </Grid>
-                    <Grid item>
-                        <Button fullWidth variant="contained" startIcon={<CallSplit />} disabled={!this.state.document} onClick={() => this.onSplitPdfClick("FL")}>
-                            Florida
-                        </Button>
-                    </Grid>
-                    <Grid item>
-                        <Button variant="contained" startIcon={<CallSplit />} disabled={!this.state.document} onClick={() => this.onSplitPdfClick("GA")}>
-                            Georgia
-                        </Button>
-                    </Grid>
-                    <Grid item>
-                        <Button variant="contained" startIcon={<CallSplit />} disabled={!this.state.document} onClick={() => this.onSplitPdfClick("IL")}>
-                            Illinois
-                        </Button>
-                    </Grid>
-                    <Grid item>
-                        <Button variant="contained" startIcon={<CallSplit />} disabled={!this.state.document} onClick={() => this.onSplitPdfClick("OH")}>
-                            Ohio
-                        </Button>
-                    </Grid>
-                    <Grid item>
-                        <Button variant="contained" startIcon={<CallSplit />} disabled={!this.state.document} onClick={() => this.onSplitPdfClick("OK")}>
-                            Oklahoma
-                        </Button>
-                    </Grid>
-                    <Grid item>
-                        <Button variant="contained" startIcon={<CallSplit />} disabled={!this.state.document} onClick={() => this.onSplitPdfClick("PA")}>
-                            Pennsylvania
-                        </Button>
-                    </Grid>
-                    <Grid item>
-                        <Button variant="contained" startIcon={<CallSplit />} disabled={!this.state.document} onClick={() => this.onSplitPdfClick("TX")}>
-                            Texas
-                        </Button>
-                    </Grid>
-                    <Grid item>
-                        <Button variant="contained" startIcon={<CallSplit />} disabled={!this.state.document} onClick={() => this.onSplitPdfClick("VA")}>
-                            Virginia
-                        </Button>
-                    </Grid>
+                    {Object.entries(splitRenameStates).map(([stateCode, statePDF]) => (
+                        <Grid item key={stateCode}>
+                            <Button fullWidth variant='contained' startIcon={<CallSplit />} disabled={!this.state.document} onClick={() => this.onSplitPdfClick(splitRenameStates, stateCode)}>
+                                {statePDF.getName()}
+                            </Button>
+                        </Grid>
+                    ))}
 
                     <h2>Split, Rename, and Sign PDF</h2>
-                    <Grid item>
-                        <Button variant="contained" startIcon={<DriveFileRenameOutline />} disabled={(this.state.signaturePicture.length === 0)} onClick={() => this.onSplitPdfClick("AZ")}>
-                            Arizona
-                        </Button>
-                    </Grid>
-                    <Grid item>
-                        <Button variant="contained" startIcon={<DriveFileRenameOutline />} disabled={(this.state.signaturePicture.length === 0)} onClick={() => this.onSplitPdfClick("CA")}>
-                            California
-                        </Button>
-                    </Grid>
-                    <Grid item>
-                        <Button variant="contained" startIcon={<DriveFileRenameOutline />} disabled={(this.state.signaturePicture.length === 0)} onClick={() => this.onSplitPdfClick("NV")}>
-                            Nevada
-                        </Button>
-                    </Grid>
-                    <Grid item>
-                        <Button variant="contained" startIcon={<DriveFileRenameOutline />} disabled={(this.state.signaturePicture.length === 0)} onClick={() => this.onSplitPdfClick("NC")}>
-                            North Carolina
-                        </Button>
-                    </Grid>
-                    <Grid item>
-                        <Button variant="contained" startIcon={<DriveFileRenameOutline />} disabled={(this.state.signaturePicture.length === 0)} onClick={() => this.onSplitPdfClick("WV")}>
-                            West Virginia
-                        </Button>
-                    </Grid>
+                    {Object.entries(splitRenameSignStates).map(([stateCode, statePDF]) => (
+                        <Grid item key={stateCode}>
+                            <Button fullWidth variant='contained' startIcon={<CallSplit />} disabled={!this.state.document} onClick={() => this.onSplitPdfClick(splitRenameSignStates, stateCode)}>
+                                {statePDF.getName()}
+                            </Button>
+                        </Grid>
+                    ))}
                 </Grid>
             </div>
 
