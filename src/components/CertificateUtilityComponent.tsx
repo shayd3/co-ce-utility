@@ -149,7 +149,7 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
         }
 
         // Start name extraction if true
-        let lastNames: string[] = []
+        let nameSubStrings: string[] = []
         if (extractNames) {
             let pdfTextContent = await this.getTextContentFromAllPages()
             if (!pdfTextContent) {
@@ -158,12 +158,12 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
             }
             pdfTextContent.forEach((page, i) => {
                 let fullName = page[states[state].getProducerNameIndex()].str
-                let lastName = this.getLastWordInStr(fullName)
-                if (lastName === undefined) {
+                let nameSubString = this.getLastWordInStr(fullName)
+                if (nameSubString === undefined) {
                     console.error(`there was an issue getting last name from page ${i + 1}...`)
                     return
                 }
-                lastNames.push(lastName)
+                nameSubStrings.push(nameSubString)
             })
         }
 
@@ -193,7 +193,7 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
             if (state === "") {
                 zipFile.file(`${i + 1}.pdf`, pdfBytes);
             } else {
-                zipFile.file(`${lastNames[i]} - ${state}.pdf`, pdfBytes)
+                zipFile.file(`${nameSubStrings[i]} - ${state}.pdf`, pdfBytes)
             }
 
         }
@@ -232,12 +232,32 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
         return (pdfPagesContent[pageNum][lineNum]).str
     }
 
+    /**
+     * getLastWordInStr() takes a string and returns the last word in the string
+     * if the last word is a suffix (i.e. Jr., Sr., III, IV, etc.) it will return the word before the suffix
+     * plus the suffix itself
+     *
+     * @param str
+     * @returns
+     */
     getLastWordInStr(str: string) {
-        return str.split(" ").pop()
+        let strSplit = str.split(" ")
+        let nameSubString = strSplit[strSplit.length - 1]
+        if (this.matchNameSuffix(nameSubString)) {
+            nameSubString = `${strSplit[strSplit.length - 2]} ${nameSubString}`
+        }
+        return nameSubString
     }
 
+    /**
+     *  matchNameSuffix() takes a string and returns true if the following regex is matched:
+     * /(?:[JS]r\.?|I|III?|IV)?$/
+     *
+     * @param str
+     * @returns
+     */
     matchNameSuffix(str: string) {
-        return str.match(/(?:[JS]r\.?|I|III?|IV)?$/)
+        return /(?:[JS]R\.?|I|III?|IV)?$/.test(str.toUpperCase())
     }
 
     fileData() {
