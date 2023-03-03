@@ -198,14 +198,22 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
             }
             pdfTextContent.forEach((page, i) => {
                 let fullName = page[states[state].getProducerNameIndex()].str
-                let nameSubString = this.getLastWordInStr(fullName)
-                if (nameSubString === undefined) {
-                    console.error(`there was an issue getting last name from page ${i + 1}...`)
-                    return
+                let fullNameSplit = fullName.split(" ")
+
+                let lastName = fullNameSplit[fullNameSplit.length - 1].toUpperCase()
+                if (lastName === "SR" || lastName === "JR" || lastName === "I" || lastName === "II" || lastName === "III" || lastName === "IV") {
+                    lastName = fullNameSplit[fullNameSplit.length - 2] + " " + lastName
+                    fullNameSplit.splice(fullNameSplit.length - 2, 2)
+                } else {
+                    fullNameSplit.splice(fullNameSplit.length - 1, 1)
                 }
-                nameSubStrings.push(nameSubString)
+                let firstName = fullNameSplit.join(" ")
+                let newFullName = lastName + ", " + firstName
+                console.log(newFullName)
+                nameSubStrings.push(newFullName)
             })
         }
+
 
         if (addSignature) {
             if (this.state.signaturePicture.length !== 0) {
@@ -270,34 +278,6 @@ class CertificateUtility extends Component<CertificateUtilityProps, CertificateU
     // extractStringFromPDF() extracts string from given page and line number from given TextItem[][]
     extractStringFromPDF(pdfPagesContent: TextItem[][], pageNum: number, lineNum: number) {
         return (pdfPagesContent[pageNum][lineNum]).str
-    }
-
-    /**
-     * getLastWordInStr() takes a string and returns the last word in the string
-     * if the last word is a suffix (i.e. Jr., Sr., III, IV, etc.) it will return the word before the suffix
-     * plus the suffix itself
-     *
-     * @param str
-     * @returns
-     */
-    getLastWordInStr(str: string) {
-        let strSplit = str.split(" ")
-        let nameSubString = strSplit[strSplit.length - 1]
-        if (this.matchNameSuffix(nameSubString)) {
-            nameSubString = `${strSplit[strSplit.length - 2]} ${nameSubString}`
-        }
-        return nameSubString
-    }
-
-    /**
-     *  matchNameSuffix() takes a string and returns true if the following regex is matched:
-     * /(?:[JS]r\.?|I|III?|IV)?$/
-     *
-     * @param str
-     * @returns
-     */
-    matchNameSuffix(str: string) {
-        return /(?:[JS]R\.?|I|III?|IV)?$/.test(str.toUpperCase())
     }
 
     /**
