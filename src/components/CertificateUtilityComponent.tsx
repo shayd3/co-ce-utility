@@ -33,7 +33,7 @@ const splitRenameStates: Record<string, StatePDF> = {
     'OK': new StatePDF("Oklahoma", "OK", 6, 0, 0, 0, 0),
     'OR': new StatePDF("Oregon", "OR", 6, 0, 0, 0, 0),
     'PA': new StatePDF("Pennsylvania", "PA", 6, 0, 0, 0, 0),
-    'TX': new StatePDF("Texas", "TX", 39, 0, 0, 0, 0),
+    'TX': new StatePDF("Texas", "TX", 38, 0, 0, 0, 0),
     'VA': new StatePDF("Virginia", "VA", 48, 290, 271, 0, 0)
 }
 
