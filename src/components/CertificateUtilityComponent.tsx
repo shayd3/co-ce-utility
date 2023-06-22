@@ -44,7 +44,7 @@ const splitRenameSignStates : Record<string, StatePDF> = {
     'CA': new StatePDF("California", "CA", 41, 132, 185, 330, 20),
     'CO': new StatePDF("Colorado", "CO", 249, 40, 305, 330, 20),
     'IA': new StatePDF("Iowa", "IA", 6, 0, 0, 0, 0),
-    'IN': new StatePDF("Indiana", "IN", 66, 0, 0, 0, 0),
+    'IN': new StatePDF("Indiana", "IN", 66, 300, 385, 330, 20),
     'NE': new StatePDF("Nebraska", "NE", 6, 0, 0, 0, 0),
     'NV': new StatePDF("Nevada", "NV", 89, 75, 203, 310, 20),
     'NC': new StatePDF("North Carolina", "NC", 20, 325, 405, 296, 30),
