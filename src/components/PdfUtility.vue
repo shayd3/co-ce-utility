@@ -2,20 +2,23 @@
 import Panel from 'primevue/panel';
 import Button from 'primevue/button';
 
+import PdfUpload from './PdfUpload.vue';
+import SignatureUpload from './SignatureUpload.vue';
+import PdfSplitter from './PdfSplitter.vue';
 </script>
 
 <template>
     <div id="pdfPanels">
         <Panel header="PDF">
             <div id="pdfDetails">
-                <Button label="Upload PDF" icon="pi pi-upload" severity="info" raised />
+                <PdfUpload />
                 <h3>PDF Details:</h3>
                 <Button label="Clear PDF" icon="pi pi-times" severity="danger" raised />
             </div>
         </Panel>
         <Panel header="Signature">
             <div id="signatureDetails">
-                <Button label="Upload Signature" icon="pi pi-pencil" severity="info" raised />
+                <SignatureUpload />
                 <h3>Signature Details:</h3>
                 <Button label="Clear Signature" icon="pi pi-times" severity="danger" raised />
             </div>
@@ -23,11 +26,11 @@ import Button from 'primevue/button';
     </div>
     <div id="pdfSplitter">
         <h2>PDF Splitter</h2>
-        <Button label="Split PDF" icon="pi pi-arrow-right" severity="info" raised />
+        <PdfSplitter />
     </div>
     <div id="pdfSplitterWithSignature">
         <h2>PDF Splitter with Signature</h2>
-        <Button label="USA State Here" icon="pi pi-arrow-right" severity="info" raised />
+
     </div>
 </template>
 
