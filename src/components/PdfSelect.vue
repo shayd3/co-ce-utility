@@ -4,5 +4,5 @@ import Button from 'primevue/button';
 </script>
 
 <template>
-    <Button label="Upload PDF" icon="pi pi-upload" severity="info" raised />
+    <Button label="Select PDF" icon="pi pi-upload" severity="info" raised />
 </template>

@@ -2,7 +2,7 @@
 import Panel from 'primevue/panel';
 import Button from 'primevue/button';
 
-import PdfUpload from './PdfUpload.vue';
+import PdfSelect from './PdfSelect.vue';
 import SignatureUpload from './SignatureUpload.vue';
 import PdfSplitter from './PdfSplitter.vue';
 </script>
@@ -11,7 +11,7 @@ import PdfSplitter from './PdfSplitter.vue';
     <div id="pdfPanels">
         <Panel header="PDF">
             <div id="pdfDetails">
-                <PdfUpload />
+                <PdfSelect />
                 <h3>PDF Details:</h3>
                 <Button label="Clear PDF" icon="pi pi-times" severity="danger" raised />
             </div>
