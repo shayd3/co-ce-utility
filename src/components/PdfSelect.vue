@@ -1,8 +1,18 @@
 <script setup lang="ts">
-import Button from 'primevue/button';
+import FileUpload from 'primevue/fileupload';
+
+const onFileSelect = (event: any) => {
+    console.log(event.files[0]);
+}
 
 </script>
 
 <template>
-    <Button label="Select PDF" icon="pi pi-upload" severity="info" raised />
+    <div id="pdfSelect">
+        <FileUpload mode="basic" name="pdf" accept="application/pdf" :multiple="false" :customUpload="true" @uploader="onFileSelect" :auto="true" chooseLabel="Select PDF"/>
+    </div>
 </template>
+
+<style scoped>
+
+</style>s
