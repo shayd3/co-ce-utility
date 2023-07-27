@@ -12,15 +12,11 @@ import PdfSplitter from './PdfSplitter.vue';
         <Panel header="PDF">
             <div id="pdfDetails">
                 <PdfSelect />
-                <h3>PDF Details:</h3>
-                <Button label="Clear PDF" icon="pi pi-times" severity="danger" raised />
             </div>
         </Panel>
         <Panel header="Signature">
             <div id="signatureDetails">
                 <SignatureUpload />
-                <h3>Signature Details:</h3>
-                <Button label="Clear Signature" icon="pi pi-times" severity="danger" raised />
             </div>
         </Panel>
     </div>
