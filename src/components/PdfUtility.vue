@@ -2,7 +2,6 @@
 import Panel from 'primevue/panel';
 import Button from 'primevue/button';
 
-
 </script>
 
 <template>
@@ -21,6 +20,14 @@ import Button from 'primevue/button';
                 <Button label="Clear Signature" icon="pi pi-times" severity="danger" raised />
             </div>
         </Panel>
+    </div>
+    <div id="pdfSplitter">
+        <h2>PDF Splitter</h2>
+        <Button label="Split PDF" icon="pi pi-arrow-right" severity="info" raised />
+    </div>
+    <div id="pdfSplitterWithSignature">
+        <h2>PDF Splitter with Signature</h2>
+        <Button label="USA State Here" icon="pi pi-arrow-right" severity="info" raised />
     </div>
 </template>
 
