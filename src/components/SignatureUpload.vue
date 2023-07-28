@@ -9,7 +9,7 @@ const onSignatureFileSelect = (event: any) => {
 
 <template>
     <!-- Only accept images -->
-    <FileUpload mode="basic" name="signature" accept="image/*" :multiple="false" :customUpload="true" @uploader="onSignatureFileSelect" :auto="true" chooseLabel="Select Signature"/>
+    <FileUpload class="w-full" mode="basic" name="signature" accept="image/*" :multiple="false" :customUpload="true" @uploader="onSignatureFileSelect" :auto="true" chooseLabel="Select Signature"/>
     <h3>Signature Details:</h3>
-    <Button label="Clear Signature" icon="pi pi-times" severity="danger" raised />
+    <Button class="w-full" label="Clear Signature" icon="pi pi-times" severity="danger" raised />
 </template>

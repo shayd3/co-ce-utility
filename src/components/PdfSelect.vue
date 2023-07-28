@@ -30,12 +30,16 @@ const onFileSelect = (event: any) => {
 
 <template>
     <div id="pdfSelect">
-        <FileUpload mode="basic" name="pdf" accept="application/pdf" :multiple="false" :customUpload="true" @uploader="onFileSelect" :auto="true" chooseLabel="Select PDF"/>
+        <FileUpload class="w-full" mode="basic" name="pdf" accept="application/pdf" :multiple="false" :customUpload="true" @uploader="onFileSelect" :auto="true" chooseLabel="Select PDF"/>
         <h3>PDF Details:</h3>
-        <Button label="Clear PDF" icon="pi pi-times" severity="danger" raised />
+        <p><b>Selected File:</b> {{ usePdfStore().pdfName }}</p>
+        <p><b>Number of Pages:</b> {{ usePdfStore().pdf?.getPageCount() }}</p>
+        <Button class="w-full" label="Clear PDF" icon="pi pi-times" severity="danger" raised />
     </div>
 </template>
 
 <style scoped>
-
-</style>s
+/* Button, #pdfSelect > .p-fileupload > span{
+    width: 100%
+} */
+</style>
