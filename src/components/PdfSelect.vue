@@ -32,14 +32,17 @@ const onFileSelect = (event: any) => {
     <div id="pdfSelect">
         <FileUpload class="w-full" mode="basic" name="pdf" accept="application/pdf" :multiple="false" :customUpload="true" @uploader="onFileSelect" :auto="true" chooseLabel="Select PDF"/>
         <h3>PDF Details:</h3>
-        <p><b>Selected File:</b> {{ usePdfStore().pdfName }}</p>
-        <p><b>Number of Pages:</b> {{ usePdfStore().pdf?.getPageCount() }}</p>
+        <div v-if="usePdfStore().pdf">
+            <p><b>Selected File:</b> {{ usePdfStore().pdfName }}</p>
+            <p><b>Number of Pages:</b> {{ usePdfStore().pdf?.getPageCount() }}</p>
+        </div>
+        <div v-else>
+            <p>No PDF selected</p>
+        </div>
         <Button class="w-full" label="Clear PDF" icon="pi pi-times" severity="danger" raised />
     </div>
 </template>
 
 <style scoped>
-/* Button, #pdfSelect > .p-fileupload > span{
-    width: 100%
-} */
+
 </style>
