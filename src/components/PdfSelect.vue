@@ -44,7 +44,7 @@ const onClearPdf = () => {
         <div v-else>
             <p>No PDF selected</p>
         </div>
-        <Button class="w-full" label="Clear PDF" icon="pi pi-times" severity="danger" raised @click="onClearPdf" />
+        <Button class="w-full" label="Clear PDF" icon="pi pi-times" severity="danger" raised @click="onClearPdf" :disabled="!usePdfStore().pdf" />
     </div>
 </template>
 

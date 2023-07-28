@@ -16,7 +16,6 @@ const onSignatureFileSelect = (event: any) => {
 
         const store = useSignatureStore();
         store.setSignature(bytes)
-
     }
 }
 
@@ -44,7 +43,7 @@ const onClearSignature = () => {
         <div v-else>
             <p>No signature selected</p>
         </div>
-        <Button class="w-full" label="Clear Signature" icon="pi pi-times" severity="danger" raised @click="onClearSignature"/>
+        <Button class="w-full" label="Clear Signature" icon="pi pi-times" severity="danger" raised @click="onClearSignature" :disabled="!useSignatureStore().signature"/>
     </div>
 </template>
 
