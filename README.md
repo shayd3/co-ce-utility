@@ -42,6 +42,9 @@ npm run lint
 ## References
 PrimeVue - https://primefaces.org/primevue
 PrimeFlex - https://www.primefaces.org/primeflex/
+pdf-lib - https://pdf-lib.js.org/
+pdf.js - https://mozilla.github.io/pdf.js/
+
 Vue 3 - https://v3.vuejs.org/guide/introduction.html
 Vite - https://vitejs.dev/guide/
 
