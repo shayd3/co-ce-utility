@@ -2,6 +2,7 @@
 import Button from 'primevue/button';
 import FileUpload from 'primevue/fileupload';
 import { PDFDocument } from 'pdf-lib';
+import { usePdfStore } from '@/stores/pdf';
 
 const onFileSelect = (event: any) => {
     let file = event.files[0] as File;
@@ -15,19 +16,13 @@ const onFileSelect = (event: any) => {
     reader.onload = async () => {
         let arrayBuffer = reader.result as ArrayBuffer;
         let bytes = new Uint8Array(arrayBuffer);
-        let pdfDoc = PDFDocument.load(bytes);
+        let pdfDoc = await PDFDocument.load(bytes, {
+            updateMetadata: false
+        })
 
-        // Get PDF page count
-        let pageCount = (await pdfDoc).getPageCount();
-
-        // Get PDF page dimensions
-        let firstPage = (await pdfDoc).getPages()[0];
-        let dimensions = firstPage.getSize();
-
-        console.log(`PDF Name: ${fileName}`);
-        console.log(`PDF Page Count: ${pageCount}`);
-        console.log(`PDF Page Dimensions: ${dimensions.width} x ${dimensions.height}`);
-
+        const store = usePdfStore();
+        store.setPdf(pdfDoc)
+        store.setPdfName(fileName)
     }
 }
 
