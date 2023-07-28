@@ -23,6 +23,7 @@ const onFileSelect = (event: any) => {
         })
 
         store.setPdf(pdfDoc)
+        store.setPdfBytes(bytes)
         store.setPdfName(fileName)
     }
 }
