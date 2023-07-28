@@ -2,7 +2,6 @@ import type { PDFDocument } from 'pdf-lib';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 
-
 export const usePdfStore = defineStore('pdf', () => {
     const pdf = ref<PDFDocument | null>();
     const pdfName = ref<string>();

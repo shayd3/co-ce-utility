@@ -11,14 +11,21 @@ const onSignatureFileSelect = (event: any) => {
     reader.readAsArrayBuffer(file);
 
     reader.onloadend = async () => {
-        if(event.readyState === FileReader.DONE) {
-            let arrayBuffer = reader.result as ArrayBuffer;
-            let bytes = new Uint8Array(arrayBuffer);
+        let arrayBuffer = reader.result as ArrayBuffer;
+        let bytes = new Uint8Array(arrayBuffer);
 
-            const store = useSignatureStore();
-            store.setSignature(bytes)
-        }
+        const store = useSignatureStore();
+        store.setSignature(bytes)
+
     }
+}
+
+const generateImgBlob = (bytes: Uint8Array | undefined | null) => {
+    if (!bytes) {
+        return null;
+    }
+    const blob = new Blob([bytes]);
+    return URL.createObjectURL(blob).toString();
 }
 
 const onClearSignature = () => {
@@ -28,8 +35,18 @@ const onClearSignature = () => {
 </script>
 
 <template>
-    <!-- Only accept images -->
-    <FileUpload class="w-full" mode="basic" name="signature" accept="image/*" :multiple="false" :customUpload="true" @uploader="onSignatureFileSelect" :auto="true" chooseLabel="Select Signature"/>
-    <h3>Signature Details:</h3>
-    <Button class="w-full" label="Clear Signature" icon="pi pi-times" severity="danger" raised @click="onClearSignature"/>
+    <div id="signatureSelect">
+        <FileUpload class="w-full" mode="basic" name="signature" accept="image/*" :multiple="false" :customUpload="true" @uploader="onSignatureFileSelect" :auto="true" chooseLabel="Select Signature"/>
+        <h3>Signature Details:</h3>
+        <div v-if="useSignatureStore().signature">
+            <img :src="generateImgBlob(useSignatureStore().getSignature()) || undefined" alt="Signature Image" />
+        </div>
+        <div v-else>
+            <p>No signature selected</p>
+        </div>
+        <Button class="w-full" label="Clear Signature" icon="pi pi-times" severity="danger" raised @click="onClearSignature"/>
+    </div>
 </template>
+
+<style scoped>
+</style>
