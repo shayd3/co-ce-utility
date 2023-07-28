@@ -23,10 +23,6 @@ const onFileSelect = (event: any) => {
         const store = usePdfStore();
         store.setPdf(pdfDoc)
         store.setPdfName(fileName)
-
-        // print state
-        console.log(store.getPdf())
-        console.log(store.getPdfName())
     }
 }
 
