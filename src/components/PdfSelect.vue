@@ -26,6 +26,11 @@ const onFileSelect = (event: any) => {
     }
 }
 
+const onClearPdf = () => {
+    const store = usePdfStore()
+    store.clearPdf()
+}
+
 </script>
 
 <template>
@@ -39,7 +44,7 @@ const onFileSelect = (event: any) => {
         <div v-else>
             <p>No PDF selected</p>
         </div>
-        <Button class="w-full" label="Clear PDF" icon="pi pi-times" severity="danger" raised />
+        <Button class="w-full" label="Clear PDF" icon="pi pi-times" severity="danger" raised @click="onClearPdf" />
     </div>
 </template>
 
