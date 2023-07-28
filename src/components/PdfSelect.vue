@@ -4,6 +4,8 @@ import FileUpload from 'primevue/fileupload';
 import { PDFDocument } from 'pdf-lib';
 import { usePdfStore } from '@/stores/pdf';
 
+const store = usePdfStore();
+
 const onFileSelect = (event: any) => {
     let file = event.files[0] as File;
     let fileName = file.name;
@@ -20,14 +22,12 @@ const onFileSelect = (event: any) => {
             updateMetadata: false
         })
 
-        const store = usePdfStore();
         store.setPdf(pdfDoc)
         store.setPdfName(fileName)
     }
 }
 
 const onClearPdf = () => {
-    const store = usePdfStore()
     store.clearPdf()
 }
 

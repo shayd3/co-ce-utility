@@ -3,6 +3,8 @@ import Button from 'primevue/button';
 import FileUpload from 'primevue/fileupload';
 import { useSignatureStore } from '@/stores/signature';
 
+const store = useSignatureStore();
+
 const onSignatureFileSelect = (event: any) => {
     let file = event.files[0] as File;
     let reader = new FileReader();
@@ -14,7 +16,6 @@ const onSignatureFileSelect = (event: any) => {
         let arrayBuffer = reader.result as ArrayBuffer;
         let bytes = new Uint8Array(arrayBuffer);
 
-        const store = useSignatureStore();
         store.setSignature(bytes)
     }
 }
@@ -28,7 +29,6 @@ const generateImgBlob = (bytes: Uint8Array | undefined | null) => {
 }
 
 const onClearSignature = () => {
-    const store = useSignatureStore()
     store.clearSignature()
 }
 </script>
