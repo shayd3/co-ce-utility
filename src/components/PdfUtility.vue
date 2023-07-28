@@ -6,11 +6,11 @@ import DynamicDialog from 'primevue/dynamicdialog';
 
 import PdfSelect from './PdfSelect.vue';
 import SignatureUpload from './SignatureUpload.vue';
-const PdfSplitter = defineAsyncComponent(() => import('./PdfSplitter.vue'))
 
 import { usePdfStore } from '@/stores/pdf';
 import { useDialog } from 'primevue/usedialog';
 
+const PdfSplitter = defineAsyncComponent(() => import('./PdfSplitter.vue'))
 const dialog = useDialog();
 
 const onPdfSplit = () => {
@@ -24,7 +24,8 @@ const onPdfSplit = () => {
                 '960px': '75vw',
                 '640px': '90vw'
             },
-            modal: true
+            modal: true,
+            draggable: false
         }
     });
 }
@@ -47,11 +48,11 @@ const onPdfSplit = () => {
     <div id="pdfSplitter">
         <h2>PDF Splitter</h2>
         <Button label="Split PDF" icon="pi pi-arrow-right" severity="info" raised @click="onPdfSplit" :disabled="!usePdfStore().pdf" />
-        <DynamicDialog />
     </div>
     <div id="pdfSplitterWithSignature">
         <h2>PDF Splitter with Signature</h2>
     </div>
+    <DynamicDialog />
 </template>
 
 <style scoped>
