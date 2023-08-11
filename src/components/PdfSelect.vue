@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import Button from 'primevue/button';
 import FileUpload from 'primevue/fileupload';
-import { PDFDocument } from 'pdf-lib';
 import { usePdfStore } from '@/stores/pdf';
 
 const store = usePdfStore();
@@ -18,11 +17,7 @@ const onFileSelect = (event: any) => {
     reader.onload = async () => {
         let arrayBuffer = reader.result as ArrayBuffer;
         let bytes = new Uint8Array(arrayBuffer);
-        let pdfDoc = await PDFDocument.load(bytes, {
-            updateMetadata: false
-        })
 
-        store.setPdf(pdfDoc)
         store.setPdfBytes(bytes)
         store.setPdfName(fileName)
     }
@@ -40,7 +35,7 @@ const onClearPdf = () => {
         <h3>PDF Details:</h3>
         <div v-if="usePdfStore().pdf">
             <p><b>Selected File:</b> {{ usePdfStore().pdfName }}</p>
-            <p><b>Number of Pages:</b> {{ usePdfStore().pdf?.getPageCount() }}</p>
+            <p><b>Number of Pages:</b> {{ usePdfStore().getPdf()?.getPageCount() }}</p>
         </div>
         <div v-else>
             <p>No PDF selected</p>

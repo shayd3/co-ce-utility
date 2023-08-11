@@ -1,4 +1,4 @@
-import type { PDFDocument } from 'pdf-lib';
+import { PDFDocument } from 'pdf-lib';
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 
@@ -7,15 +7,16 @@ export const usePdfStore = defineStore('pdf', () => {
     const pdfBytes = ref<Uint8Array | null>();
     const pdfName = ref<string>();
 
-    const setPdf = (pdfDoc: PDFDocument | null) => {
-        pdf.value = pdfDoc;
-    };
     const getPdf = () => {
         return pdf.value;
     };
 
-    const setPdfBytes = (pdfDocBytes: Uint8Array | null) => {
+    const setPdfBytes = async (pdfDocBytes: Uint8Array | null) => {
         pdfBytes.value = pdfDocBytes;
+
+        pdf.value = await PDFDocument.load(pdfDocBytes!, {
+            updateMetadata: false
+        })
     };
     const getPdfBytes = () => {
         return pdfBytes.value;
@@ -32,6 +33,6 @@ export const usePdfStore = defineStore('pdf', () => {
         pdfBytes.value = null;
         pdfName.value = '';
     };
-    return { pdf, setPdf, getPdf, setPdfBytes, getPdfBytes, pdfName, setPdfName, getPdfName, clearPdf };
+    return { pdf, getPdf, setPdfBytes, getPdfBytes, pdfName, setPdfName, getPdfName, clearPdf };
     }
 );

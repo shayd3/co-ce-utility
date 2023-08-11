@@ -1,31 +1,34 @@
 <script setup lang="ts">
 import { usePdfStore } from '@/stores/pdf';
-// TODO: Get PDFJS working to extract text/lines...
 import * as PDFJS from "pdfjs-dist/legacy/build/pdf";
-import { PDFDocument } from 'pdf-lib';
+import type { TextItem } from 'pdfjs-dist/types/src/display/api';
+PDFJS.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${PDFJS.version}/pdf.worker.js`;
+
 
 const store = usePdfStore();
 
 // Get each line from first page of PDF
 const getLines = async () => {
-    let pdf = store.getPdf()
     let pdfBytes = store.getPdfBytes();
-    let pdfName = store.getPdfName();
 
-    // If PDF is not loaded, return
-    if (!pdf) {
-        return;
-    }
+    if (!pdfBytes) return;
 
-
+    // Use PDFJS to extract all lines from first page of PDF
+    let pdfDoc = await PDFJS.getDocument(pdfBytes!).promise;
+    let page = await pdfDoc.getPage(1);
+    let textContent = await page.getTextContent();
+    let lines = textContent.items.map((item) => (item as TextItem).str);
+    console.log(lines)
+    // Return lines
+    return lines;
 }
 </script>
 
 <template>
     <div>
-        <!-- Display lines from getLines-->
-        <div v-for="line in getLines" :key="line">
+        <p>PDF: {{ store.getPdfName() }}</p>
+        <p v-for="line in getLines()" :key="line.toString()">
             {{ line }}
-        </div>
+        </p>
     </div>
 </template>
