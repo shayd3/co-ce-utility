@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import { ref, onMounted } from 'vue';
+
 import { usePdfStore } from '@/stores/pdf';
 import type { TextItem } from 'pdfjs-dist/types/src/display/api';
-import { ref } from 'vue';
 import * as PDFJS from "pdfjs-dist";
 
 import Listbox from 'primevue/listbox';
@@ -11,18 +12,20 @@ const firstPageContent = ref([]) as { value: string[] };
 const selectedLine = ref();
 
 // Get each line from first page of PDF
-(async () => {
-    let pdfArrayBuffer = await store.getPdfBytes()
-    let pdfBytes = new Uint8Array(pdfArrayBuffer!);
-
-    // Use PDFJS to extract all lines from first page of PDF
-    let pdfDoc = await PDFJS.getDocument(pdfBytes!).promise;
-    let page = await pdfDoc.getPage(1);
-    let textContent = await page.getTextContent();
-    let lines = textContent.items.map((item) => (item as TextItem).str);
-
-    firstPageContent.value = lines;
-})();
+onMounted(() => {
+    let pdfArrayBuffer = store.getPdfBytes();
+    pdfArrayBuffer.then((arrayBuffer) => {
+        let pdfBytes = new Uint8Array(arrayBuffer!);
+        PDFJS.getDocument(pdfBytes!).promise.then((pdfDoc) => {
+            pdfDoc.getPage(1).then((page) => {
+                page.getTextContent().then((textContent) => {
+                    let lines = textContent.items.map((item) => (item as TextItem).str);
+                    firstPageContent.value = lines;
+                });
+            });
+        });
+    });
+});
 
 const getFirstPageContent = () => {
     return firstPageContent.value;
@@ -52,4 +55,5 @@ const getPdfFileName = () => {
         <p><b>PDF:</b> {{ getPdfFileName() }}</p>
         <Listbox v-model="selectedLine" :options="cleanUpPageContent(getFirstPageContent())" class="w-full" />
     </div>
+
 </template>
