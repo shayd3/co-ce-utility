@@ -7,20 +7,8 @@ const store = usePdfStore();
 
 const onFileSelect = (event: any) => {
     let file = event.files[0] as File;
-    let fileName = file.name;
-    let reader = new FileReader();
 
-    // Convert file to byte array
-    reader.readAsArrayBuffer(file);
-
-    // Create PDFDocument from array
-    reader.onload = async () => {
-        let arrayBuffer = reader.result as ArrayBuffer;
-        let bytes = new Uint8Array(arrayBuffer);
-
-        store.setPdfBytes(bytes)
-        store.setPdfName(fileName)
-    }
+    store.setPdfFile(file);
 }
 
 const onClearPdf = () => {
@@ -33,14 +21,13 @@ const onClearPdf = () => {
     <div id="pdfSelect">
         <FileUpload class="w-full" mode="basic" name="pdf" accept="application/pdf" :multiple="false" :customUpload="true" @uploader="onFileSelect" :auto="true" chooseLabel="Select PDF"/>
         <h3>PDF Details:</h3>
-        <div v-if="usePdfStore().pdf">
-            <p><b>Selected File:</b> {{ usePdfStore().pdfName }}</p>
-            <p><b>Number of Pages:</b> {{ usePdfStore().getPdf()?.getPageCount() }}</p>
+        <div v-if="usePdfStore().getPdfFile()">
+            <p><b>Selected File:</b> {{ usePdfStore().getPdfFile()?.name }}</p>
         </div>
         <div v-else>
             <p>No PDF selected</p>
         </div>
-        <Button class="w-full" label="Clear PDF" icon="pi pi-times" severity="danger" raised @click="onClearPdf" :disabled="!usePdfStore().pdf" />
+        <Button class="w-full" label="Clear PDF" icon="pi pi-times" severity="danger" raised @click="onClearPdf" :disabled="!usePdfStore().getPdfFile()" />
     </div>
 </template>
 
