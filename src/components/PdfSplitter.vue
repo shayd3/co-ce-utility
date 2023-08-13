@@ -6,6 +6,8 @@ import type { TextItem } from 'pdfjs-dist/types/src/display/api';
 import * as PDFJS from "pdfjs-dist";
 
 import Listbox from 'primevue/listbox';
+import Message from 'primevue/message';
+
 
 const store = usePdfStore();
 const firstPageContent = ref([]) as { value: string[] };
@@ -53,6 +55,7 @@ const getPdfFileName = () => {
 <template>
     <div>
         <p><b>PDF:</b> {{ getPdfFileName() }}</p>
+        <Message :closable="false">Select the line you would like to split your PDF on! (Example: if you select "Bob Ross", it will take that same line on each page and rename each split PDF with the text of that line.)</Message>
         <Listbox v-model="selectedLine" :options="cleanUpPageContent(getFirstPageContent())" class="w-full" />
     </div>
 
