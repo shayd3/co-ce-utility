@@ -33,30 +33,25 @@ const getFirstPageContent = () => {
     return firstPageContent.value;
 }
 
-const cleanUpPageContent = (pageContent: string[]) => {
-    // Remove empty lines
-    let cleanedPageContent = pageContent.filter((line) => line.trim() !== "");
+// TODO: Figure out a way to remove some of the noise from the TextContent
+// Call with cleanUpPageContent(getFirstPageContent())
+// const cleanUpPageContent = (pageContent: string[]) => {
+//     // Remove empty lines
+//     let cleanedPageContent = pageContent.filter((line) => line.trim() !== "");
 
-    // Remove lines that is just 1 or more '_'
-    cleanedPageContent = cleanedPageContent.filter((line) => !line.match(/^_+$/));
+//     // Remove lines that is just 1 or more '_'
+//     cleanedPageContent = cleanedPageContent.filter((line) => !line.match(/^_+$/));
 
-    // Remove lines that are just integers, decimals, or integers with decimals
-    cleanedPageContent = cleanedPageContent.filter((line) => !line.match(/^\d+\.?\d*$/));
+//     // Remove lines that are just integers, decimals, or integers with decimals
+//     cleanedPageContent = cleanedPageContent.filter((line) => !line.match(/^\d+\.?\d*$/));
 
-    return cleanedPageContent;
-}
-
-const getPdfFileName = () => {
-    let pdfFile = store.getPdfFile();
-    return pdfFile?.name;
-}
+//     return cleanedPageContent;
+// }
 </script>
 
 <template>
     <div>
-        <p><b>PDF:</b> {{ getPdfFileName() }}</p>
-        <Message :closable="false">Select the line you would like to split your PDF on! (Example: if you select "Bob Ross", it will take that same line on each page and rename each split PDF with the text of that line.)</Message>
-        <Listbox v-model="selectedLine" :options="cleanUpPageContent(getFirstPageContent())" class="w-full" />
+        <Message :closable="false">Select the line you would like to split your PDF on!<br> (Example: if you select "Bob Ross", it will take that same line on each page and rename each split PDF with the text of that line.)</Message>
+        <Listbox v-model="selectedLine" :options="getFirstPageContent()" class="w-full" listStyle="max-height:400px" />
     </div>
-
 </template>
