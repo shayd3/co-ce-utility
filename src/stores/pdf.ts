@@ -28,27 +28,6 @@ export const usePdfStore = defineStore('pdf', () => {
         return null;
     };
 
-    // const getPdf = () => {
-    //     return pdf.value;
-    // };
-
-    // const setPdfBytes = async (pdfDocBytes: Uint8Array) => {
-    //     pdfBytes.value = pdfDocBytes;
-
-    //     pdf.value = await PDFDocument.load(pdfDocBytes!, {
-    //         updateMetadata: false
-    //     })
-    // };
-    // const getPdfBytes = () => {
-    //     return pdfBytes.value;
-    // };
-    // const setPdfName = (name: string) => {
-    //     pdfName.value = name;
-    // };
-    // const getPdfName = () => {
-    //     return pdfName.value;
-    // };
-
     function clearPdf() {
         pdfFile.value = null;
         selectedLineIndex.value = -1;
