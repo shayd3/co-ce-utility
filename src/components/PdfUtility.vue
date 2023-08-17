@@ -11,7 +11,7 @@ import { usePdfStore } from '@/stores/pdf';
 import { useDialog } from 'primevue/usedialog';
 
 const PdfSplitter = defineAsyncComponent(() => import('./PdfSplitter.vue'))
-const DialogFooter = defineAsyncComponent(() => import('./DialogFooter.vue'))
+const PdfSplitterDialogFooter = defineAsyncComponent(() => import('./PdfSplitterDialogFooter.vue'))
 const dialog = useDialog();
 
 const onPdfSplit = () => {
@@ -29,7 +29,7 @@ const onPdfSplit = () => {
             draggable: false
         },
         templates: {
-            footer: markRaw(DialogFooter)
+            footer: markRaw(PdfSplitterDialogFooter)
         }
     });
 }
