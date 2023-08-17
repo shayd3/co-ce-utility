@@ -1,0 +1,7 @@
+☐ Split PDF on selected line and create n number of PDF files in a zip and prompt download
+☐ Utilize Format Name checkbox properly format the name of the PDF file based on a person's name
+☐ Add input for state name or to provide a file with a suffix
+☐ Get gh-page working with the vue project to properly deploy app
+
+☐ Signature functionality working (hardcoded first so we can release this portion)
+☐ Signature form so that it's also 1 button and can inject signature anywhere on the PDF
