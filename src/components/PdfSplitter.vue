@@ -48,19 +48,6 @@ const getFirstPageContent = () => {
     return firstPageContent.value;
 }
 
-// TODO: Figure out a way to remove some of the noise from the TextContent
-// Call with cleanUpPageContent(getFirstPageContent())
-// const cleanUpPageContent = (pageContent: string[]) => {
-//     // Remove empty lines
-//     let cleanedPageContent = pageContent.filter((line) => line.trim() !== "");
-
-//     // Remove lines that is just 1 or more '_'
-//     cleanedPageContent = cleanedPageContent.filter((line) => !line.match(/^_+$/));
-
-//     // Remove lines that are just integers, decimals, or integers with decimals
-//     cleanedPageContent = cleanedPageContent.filter((line) => !line.match(/^\d+\.?\d*$/));
-
-//     return cleanedPageContent;
 // }
 </script>
 
