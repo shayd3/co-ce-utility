@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineAsyncComponent } from 'vue';
+import { defineAsyncComponent, markRaw } from 'vue';
 import Panel from 'primevue/panel';
 import Button from 'primevue/button';
 import DynamicDialog from 'primevue/dynamicdialog';
@@ -29,7 +29,7 @@ const onPdfSplit = () => {
             draggable: false
         },
         templates: {
-            footer: DialogFooter
+            footer: markRaw(DialogFooter)
         }
     });
 }
