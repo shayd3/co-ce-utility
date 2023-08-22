@@ -8,6 +8,8 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import PrimeVue from 'primevue/config';
 import DialogService from 'primevue/dialogservice';
+import Tooltip from 'primevue/tooltip';
+
 
 import * as PDFJS from "pdfjs-dist";
 PDFJS.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${PDFJS.version}/pdf.worker.js`;
@@ -17,6 +19,8 @@ import App from './App.vue'
 import router from './router'
 
 const app = createApp(App)
+
+app.directive('tooltip', Tooltip);
 
 app.use(createPinia())
 app.use(router)

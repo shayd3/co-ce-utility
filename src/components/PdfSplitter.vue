@@ -14,6 +14,11 @@ interface PageLine {
     lineContent: string;
 }
 
+// Object to hold tooltips
+const ToolTips = {
+    PDFSPLITTER_LISTBOX_TIP: "Note: Not all text will be displayed in the list. Lines found in the PDF are filtered out if they meet one of the following:\nBlank, Underscores (_), dates, numbers, 3 characters or less"
+}
+
 const store = usePdfStore();
 const firstPageContent = ref([]) as { value: PageLine[] };
 const selectedLineIndex = ref();
@@ -50,6 +55,7 @@ const getFirstPageContent = () => {
     return cleanUpPageContent(firstPageContent.value);
 }
 
+// TODO: Split to helper function to clean up page content with a choosable filter
 const cleanUpPageContent = (pageContent: PageLine[]) => {
     // Filter out PageLine objects where PageLine.lineContent is empty or only whitespace
     let cleanedPageContent = pageContent.filter((pageLine) => {
@@ -84,8 +90,7 @@ const cleanUpPageContent = (pageContent: PageLine[]) => {
 
 <template>
     <div>
-        <Message :closable="false">This is the first page of the PDF you selected. Select the line you would like to split your PDF on!<br> (Example: if you select "Bob Ross", it will take that same line on each page and rename each split PDF with the text of that line.)</Message>
-        <Message :closable="false">Note: Not all text will be displayed in the list. Lines found in the PDF are filtered out if they meet one of the following: Blank, Underscores (_), dates, numbers, 3 characters or less </Message>
-        <Listbox v-model="selectedLineIndex" :options="getFirstPageContent()" filter optionLabel="lineContent" optionValue="index" class="w-full" listStyle="max-height:400px" />
+        <Message severity="success" :closable="false">This is the first page of the PDF you selected. Select the line you would like to split your PDF on!<br><br> (Example: if you select "Bob Ross", it will take that same line on each page and rename each split PDF with the text of that line.)</Message>
+        <Listbox v-model="selectedLineIndex" v-tooltip="ToolTips.PDFSPLITTER_LISTBOX_TIP"  :options="getFirstPageContent()" filter optionLabel="lineContent" optionValue="index" class="w-full" listStyle="max-height:400px" />
     </div>
 </template>
