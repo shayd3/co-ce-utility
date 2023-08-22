@@ -86,6 +86,6 @@ const cleanUpPageContent = (pageContent: PageLine[]) => {
     <div>
         <Message :closable="false">This is the first page of the PDF you selected. Select the line you would like to split your PDF on!<br> (Example: if you select "Bob Ross", it will take that same line on each page and rename each split PDF with the text of that line.)</Message>
         <Message :closable="false">Note: Not all text will be displayed in the list. Lines found in the PDF are filtered out if they meet one of the following: Blank, Underscores (_), dates, numbers, 3 characters or less </Message>
-        <Listbox v-model="selectedLineIndex" :options="getFirstPageContent()" optionLabel="lineContent" optionValue="index" class="w-full" listStyle="max-height:400px" />
+        <Listbox v-model="selectedLineIndex" :options="getFirstPageContent()" filter optionLabel="lineContent" optionValue="index" class="w-full" listStyle="max-height:400px" />
     </div>
 </template>
