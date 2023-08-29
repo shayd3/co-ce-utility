@@ -19,7 +19,7 @@ const onPdfSplit = () => {
         props: {
             header: 'Split PDF',
             style: {
-                width: '50vw'
+                width: '60vw',
             },
             breakpoints: {
                 '960px': '75vw',

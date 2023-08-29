@@ -89,6 +89,12 @@ const cleanUpPageContent = (pageContent: PageLine[]) => {
 
 <template>
     <div>
+        <div v-if="usePdfStore().getPdfFile()">
+            <p><b>Selected File:</b> {{ usePdfStore().getPdfFile()?.name }}</p>
+        </div>
+        <div v-else>
+            <p>No PDF selected</p>
+        </div>
         <Message severity="success" :closable="false">This is the first page of the PDF you selected. Select the line you would like to split your PDF on!<br><br> (Example: if you select "Bob Ross", it will take that same line on each page and rename each split PDF with the text of that line.)</Message>
         <Listbox v-model="selectedLineIndex" v-tooltip="ToolTips.PDFSPLITTER_LISTBOX_TIP"  :options="getFirstPageContent()" filter optionLabel="lineContent" optionValue="index" class="w-full" listStyle="max-height:400px" />
     </div>

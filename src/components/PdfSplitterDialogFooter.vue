@@ -52,7 +52,14 @@ const splitPdf = async () => {
 }
 
 </script>
-
+<!-- TODO:
+Add name preview as inputs and options are changed (this will be an example of the first page found in the PDF)
+Add tooltip for the Format Name stating that this will only work on text that is in name format. Might yeild unexpected results if used on other text.
+Add tooltip for the Prefix and Suffix stating that this will be added to the beginning or end of the selected line text.
+Add tooltip for the Split button stating that this will split the PDF into multiple PDFs based on the number of pages in the PDF.
+Add preview of what all the PDFs will be named based on the options selected.
+Add option to download each PDF individually or as a zip file.
+-->
 <template>
     <div class="flex flex-column">
         <div class="flex flex-row gap-2 mt-1">
