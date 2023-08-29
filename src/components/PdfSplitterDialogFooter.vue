@@ -3,13 +3,18 @@ import { inject, ref } from "vue";
 import { usePdfStore } from '@/stores/pdf';
 import * as fs from 'file-saver';
 import JSZip from "jszip";
+import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 import Checkbox from 'primevue/checkbox';
 import { PDFDocument } from "pdf-lib";
 
-const dialogRef = inject("dialogRef") as any;
-const formatName = ref(true);
 const store = usePdfStore();
+const dialogRef = inject("dialogRef") as any;
+
+const prefixValue = ref("");
+const suffixValue = ref("");
+const formatName = ref(true);
+
 
 // TODO: Split the PDF on closeDialog and then download
 const closeDialog = async () => {
@@ -49,12 +54,28 @@ const splitPdf = async () => {
 </script>
 
 <template>
-    <div class="mt-3">
-        <Checkbox v-model="formatName" inputId="formatName" name="formatName" :binary=true />
-        <label for="formatName" class="mr-2"> Format Name? </label>
-
-        <Button type="button" label="Split" icon="pi pi-check" @click="closeDialog" autofocus :disabled="store.getSelectedLineIndex() == -1"></Button>
+    <div class="flex flex-column">
+        <div class="flex flex-row gap-2 mt-1">
+            <span class="p-float-label">
+                <InputText id="prefix" v-model="prefixValue" />
+                <label for="prefix">Prefix</label>
+                <!-- <small id="prefix-help">Text displayed before selected line text</small> -->
+            </span>
+            <span class="p-float-label">
+                <InputText id="suffix" v-model="suffixValue" />
+                <label for="suffix">Suffix</label>
+                <!-- <small id="suffix-help">Text displayed after selected line text</small> -->
+            </span>
+            <div class="flex align-self-center">
+                <Checkbox class="mr-1" v-model="formatName" inputId="formatName" name="formatName" :binary=true />
+                <label for="formatName" class="mr-2"> Format Name? </label>
+            </div>
+        </div>
+        <div class="flex flex-row-reverse mt-3">
+            <Button type="button" label="Split" icon="pi pi-check" @click="closeDialog" autofocus :disabled="store.getSelectedLineIndex() == -1"></Button>
+        </div>
     </div>
+
 </template>
 
 
