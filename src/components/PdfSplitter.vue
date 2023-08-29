@@ -50,7 +50,6 @@ watch(() => selectedLineIndex.value, (val) => {
     store.setSelectedLineIndex(val);
 });
 
-
 const getFirstPageContent = () => {
     return cleanUpPageContent(firstPageContent.value);
 }
