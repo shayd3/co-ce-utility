@@ -7,14 +7,16 @@ import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 import Checkbox from 'primevue/checkbox';
 import { PDFDocument } from "pdf-lib";
-import Tooltip from "primevue/tooltip";
 
 const store = usePdfStore();
 const dialogRef = inject("dialogRef") as any;
 
 const prefixValue = ref("");
 const suffixValue = ref("");
+const selectedLineText = ref("");
 const formatName = ref(true);
+
+let firstFileNamePreview = `${prefixValue.value} - ${selectedLineText.value} - ${suffixValue.value}.pdf`
 
 const ToolTips = {
     PREFIX_TIP: "Text before selected line text",
@@ -86,6 +88,8 @@ Add option to download each PDF individually or as a zip file.
             </div>
         </div>
         <div class="flex flex-row-reverse mt-3">
+            <!-- File Name Preview -->
+            <!-- <p>{{ firstFileNamePreview }}</p> -->
             <Button type="button" label="Split" icon="pi pi-check" @click="closeDialog" autofocus :disabled="store.getSelectedLineIndex() == -1"></Button>
         </div>
     </div>
