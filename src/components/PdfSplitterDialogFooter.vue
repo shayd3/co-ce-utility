@@ -7,6 +7,7 @@ import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 import Checkbox from 'primevue/checkbox';
 import { PDFDocument } from "pdf-lib";
+import Tooltip from "primevue/tooltip";
 
 const store = usePdfStore();
 const dialogRef = inject("dialogRef") as any;
@@ -14,6 +15,12 @@ const dialogRef = inject("dialogRef") as any;
 const prefixValue = ref("");
 const suffixValue = ref("");
 const formatName = ref(true);
+
+const ToolTips = {
+    PREFIX_TIP: "Text before selected line text",
+    SUFFIX_TIP: "Text after selected line text",
+    FORMAT_NAME_TIP: "Format selected line text to name format (Last, First Middle. Suffix). May yeild unexpected results if used on other text."
+}
 
 
 // TODO: Split the PDF on closeDialog and then download
@@ -62,19 +69,19 @@ Add option to download each PDF individually or as a zip file.
 -->
 <template>
     <div class="flex flex-column">
-        <div class="flex flex-row gap-2 mt-1">
+        <div class="flex flex-row gap-2">
             <span class="p-float-label">
-                <InputText id="prefix" v-model="prefixValue" />
+                <InputText id="prefix"  v-tooltip.bottom="ToolTips.PREFIX_TIP" v-model="prefixValue" />
                 <label for="prefix">Prefix</label>
                 <!-- <small id="prefix-help">Text displayed before selected line text</small> -->
             </span>
             <span class="p-float-label">
-                <InputText id="suffix" v-model="suffixValue" />
+                <InputText id="suffix" v-tooltip.bottom="ToolTips.SUFFIX_TIP" v-model="suffixValue" />
                 <label for="suffix">Suffix</label>
                 <!-- <small id="suffix-help">Text displayed after selected line text</small> -->
             </span>
-            <div class="flex align-self-center">
-                <Checkbox class="mr-1" v-model="formatName" inputId="formatName" name="formatName" :binary=true />
+            <div v-tooltip.bottom="ToolTips.FORMAT_NAME_TIP" class="flex align-self-center">
+                <Checkbox inputId="formatName" class="mr-1" v-model="formatName" name="formatName" :binary=true />
                 <label for="formatName" class="mr-2"> Format Name? </label>
             </div>
         </div>

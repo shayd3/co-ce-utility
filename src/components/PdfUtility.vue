@@ -37,7 +37,7 @@ const onPdfSplit = () => {
 </script>
 
 <template>
-    <div id="pdfPanels">
+    <div id="pdfPanels" class="flex flex-row gap-3">
         <Panel header="PDF">
             <div id="pdfDetails">
                 <PdfSelect />
@@ -49,12 +49,14 @@ const onPdfSplit = () => {
             </div>
         </Panel>
     </div>
-    <div id="pdfSplitter">
-        <h2>PDF Splitter</h2>
-        <Button label="Split PDF" icon="pi pi-arrow-right" severity="info" raised @click="onPdfSplit" :disabled="!usePdfStore().getPdfFile()" />
-    </div>
-    <div id="pdfSplitterWithSignature">
-        <h2>PDF Splitter with Signature</h2>
+    <div class="flex flex-column">
+        <div id="pdfSplitter">
+            <h2>PDF Splitter</h2>
+            <Button label="Split PDF" icon="pi pi-arrow-right" severity="info" raised @click="onPdfSplit" :disabled="!usePdfStore().getPdfFile()" />
+        </div>
+        <div id="pdfSplitterWithSignature">
+            <h2>PDF Splitter with Signature</h2>
+        </div>
     </div>
     <DynamicDialog />
 </template>
@@ -62,16 +64,6 @@ const onPdfSplit = () => {
 <style scoped>
 input {
     display: none;
-}
-#pdfPanels {
-    display: flex;
-    flex-direction: row;
-    gap: 10px
-}
-
-#pdfDetails, #signatureDetails {
-    display: flex;
-    flex-direction: column;
 }
 </style>
 ```
