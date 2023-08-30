@@ -13,19 +13,20 @@ const dialogRef = inject("dialogRef") as any;
 
 const prefixValue = ref("");
 const suffixValue = ref("");
+const seperator = ref(" - ");
 const selectedLineText = ref("");
+
 const formatName = ref(true);
 
-let firstFileNamePreview = `${prefixValue.value} - ${selectedLineText.value} - ${suffixValue.value}.pdf`
 
 const ToolTips = {
     PREFIX_TIP: "Text before selected line text",
     SUFFIX_TIP: "Text after selected line text",
+    SEPERATOR_TIP: "Chracter/Text to seperate prefix, selected line text, and suffix. I.e. - will produce 'Prefix - Selected Line Text - Suffix' \n Default: ' - '",
     FORMAT_NAME_TIP: "Format selected line text to name format (Last, First Middle. Suffix). May yeild unexpected results if used on other text."
 }
 
 
-// TODO: Split the PDF on closeDialog and then download
 const closeDialog = async () => {
     await splitPdf();
     dialogRef.value.close();
@@ -60,40 +61,62 @@ const splitPdf = async () => {
 
 }
 
+const getFirstFileNamePreview = () => {
+    let selectedLineText = store.getSelectedLineIndex();
+    let prefix = prefixValue.value;
+    let suffix = suffixValue.value;
+    let formattedName = formatName.value;
+
+    let firstFileNamePreview = "";
+    if (formattedName) {
+        firstFileNamePreview = `${prefix} ${selectedLineText} ${suffix}`;
+    } else {
+        firstFileNamePreview = `${prefix} ${selectedLineText} ${suffix}`;
+    }
+
+    return firstFileNamePreview;
+}
+
 </script>
+
 <!-- TODO:
 Add name preview as inputs and options are changed (this will be an example of the first page found in the PDF)
-Add tooltip for the Format Name stating that this will only work on text that is in name format. Might yeild unexpected results if used on other text.
-Add tooltip for the Prefix and Suffix stating that this will be added to the beginning or end of the selected line text.
 Add tooltip for the Split button stating that this will split the PDF into multiple PDFs based on the number of pages in the PDF.
 Add preview of what all the PDFs will be named based on the options selected.
 Add option to download each PDF individually or as a zip file.
 -->
-<template>
+<template class="m-2">
     <div class="flex flex-column">
         <div class="flex flex-row gap-2">
-            <span class="p-float-label">
-                <InputText id="prefix"  v-tooltip.bottom="ToolTips.PREFIX_TIP" v-model="prefixValue" />
+            <span class="p-float-label" v-tooltip.top="ToolTips.PREFIX_TIP">
+                <InputText id="prefix" v-model="prefixValue" />
                 <label for="prefix">Prefix</label>
-                <!-- <small id="prefix-help">Text displayed before selected line text</small> -->
             </span>
-            <span class="p-float-label">
-                <InputText id="suffix" v-tooltip.bottom="ToolTips.SUFFIX_TIP" v-model="suffixValue" />
+            <span class="p-float-label" v-tooltip.top="ToolTips.SUFFIX_TIP">
+                <InputText id="suffix" v-model="suffixValue" />
                 <label for="suffix">Suffix</label>
-                <!-- <small id="suffix-help">Text displayed after selected line text</small> -->
             </span>
-            <div v-tooltip.bottom="ToolTips.FORMAT_NAME_TIP" class="flex align-self-center">
+            <span class="p-float-label" v-tooltip.top="ToolTips.SEPERATOR_TIP">
+                <InputText id="seperator" v-model="seperator" />
+                <label for="seperator">Seperator</label>
+            </span>
+            <div v-tooltip.top="ToolTips.FORMAT_NAME_TIP" class="flex align-self-center">
                 <Checkbox inputId="formatName" class="mr-1" v-model="formatName" name="formatName" :binary=true />
                 <label for="formatName" class="mr-2"> Format Name? </label>
             </div>
         </div>
-        <div class="flex flex-row-reverse mt-3">
+        <div class="flex flex-row justify-content-between flex-wrap mt-3">
             <!-- File Name Preview -->
-            <!-- <p>{{ firstFileNamePreview }}</p> -->
-            <Button type="button" label="Split" icon="pi pi-check" @click="closeDialog" autofocus :disabled="store.getSelectedLineIndex() == -1"></Button>
+            <p class="flex align-items-center justify-content-center">First File Name Preview: {{ getFirstFileNamePreview }}</p>
+            <Button class="flex align-items-center justify-content-center" type="button" label="Split" icon="pi pi-check" @click="closeDialog" autofocus :disabled="store.getSelectedLineIndex() == -1"></Button>
         </div>
     </div>
 
 </template>
 
+<style>
+.p-dialog .p-dialog-footer {
+    padding: 1.75rem 1.5rem 1rem 1.5rem;
+}
+</style>
 
