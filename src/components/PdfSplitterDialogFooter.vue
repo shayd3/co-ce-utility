@@ -61,21 +61,7 @@ const splitPdf = async () => {
 
 }
 
-const getFirstFileNamePreview = () => {
-    let selectedLineText = store.getSelectedLineIndex();
-    let prefix = prefixValue.value;
-    let suffix = suffixValue.value;
-    let formattedName = formatName.value;
 
-    let firstFileNamePreview = "";
-    if (formattedName) {
-        firstFileNamePreview = `${prefix} ${selectedLineText} ${suffix}`;
-    } else {
-        firstFileNamePreview = `${prefix} ${selectedLineText} ${suffix}`;
-    }
-
-    return firstFileNamePreview;
-}
 
 </script>
 
