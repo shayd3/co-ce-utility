@@ -108,6 +108,7 @@ Add tooltip for the Split button stating that this will split the PDF into multi
 Add preview of what all the PDFs will be named based on the options selected.
 Add option to download each PDF individually or as a zip file.
 Add clear button for the formating inputs to go back to defaults (blank, blank, " - ")
+Add input to allow re-naming of the resulting zip file. Make this a 2-way bind between the function call or manually typing in the input.
 -->
 <template class="m-2">
     <div class="flex flex-column">
