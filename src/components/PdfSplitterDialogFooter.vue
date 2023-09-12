@@ -7,6 +7,9 @@ import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 import Checkbox from 'primevue/checkbox';
 import { PDFDocument } from "pdf-lib";
+import * as PDFJS from "pdfjs-dist";
+import type { TextItem } from 'pdfjs-dist/types/src/display/api';
+import { formatLineText, formatLineWithPrefixSuffix } from "@/utils/splitter";
 
 const store = usePdfStore();
 const dialogRef = inject("dialogRef") as any;
@@ -37,6 +40,8 @@ const splitPdf = async () => {
     let pdfDoc = await PDFDocument.load(pdfBytesUint8Array, {
         updateMetadata: false
     });
+    let pdfTextContents = await getAllContentFromPdfPages();
+
     let pages = pdfDoc.getPages();
 
     for (let index = 0; index < pages.length; index++) {
@@ -45,7 +50,10 @@ const splitPdf = async () => {
         newPdf.addPage(copiedPage[0]);
         let newPdfBytes = await newPdf.save();
 
-        zipFile.file(`file${index + 1}.pdf`, newPdfBytes);
+        const selectedLineContent = pdfTextContents[index][store.getSelectedLineIndex()].str;
+        let fileName = generateFileName(selectedLineContent);
+
+        zipFile.file(fileName, newPdfBytes);
 
     }
     console.log("Finished splitting PDF")
@@ -57,43 +65,40 @@ const splitPdf = async () => {
 
 }
 
+const getAllContentFromPdfPages = async() => {
+    let pdfBytes = await store.getPdfBytes();
+    let pdfBytesUint8Array = new Uint8Array(pdfBytes!);
+    let pdfDoc = await PDFJS.getDocument(pdfBytesUint8Array).promise
+    let pages = pdfDoc.numPages;
+
+    let pdfPagesItems: TextItem[][] = [];
+    for (let index = 0; index < pages; index++) {
+        let page = await pdfDoc.getPage(index + 1);
+        let pageItems = await page.getTextContent();
+        pdfPagesItems.push(pageItems.items as TextItem[]);
+    }
+
+    return pdfPagesItems;
+}
+
 const pdfNamePreview = () => {
     let selectedLineContent = store.getSelectedLineContent();
 
-    if (formatName.value) {
-        selectedLineContent = formatSelectedLineText(selectedLineContent);
+    if(selectedLineContent == "") {
+        return "";
     }
 
-    if(prefixValue.value != "") {
-        selectedLineContent = prefixValue.value + seperatorValue.value + selectedLineContent;
-    }
-
-    if(suffixValue.value != "") {
-        selectedLineContent = selectedLineContent + seperatorValue.value + suffixValue.value;
-    }
-
-    return selectedLineContent
+    return generateFileName(selectedLineContent);
 }
 
-/**
- * Format selected line text to name format (Last, First Middle. Suffix)
- *
- * @param selectedLineText
- */
-const formatSelectedLineText = (selectedLineText: string) => {
-    let lineSplit = selectedLineText.split(" ");
-    let lastWord = lineSplit[lineSplit.length - 1].toUpperCase();
-    if(lastWord == "JR" || lastWord == "SR" || lastWord == "I" || lastWord == "II" || lastWord == "III" || lastWord == "IV" || lastWord == "V" || lastWord == "VI" || lastWord == "VII" || lastWord == "VIII" || lastWord == "IX" || lastWord == "X" || lastWord == "XI" || lastWord == "XII" || lastWord == "XIII" || lastWord == "XIV" || lastWord == "XV" || lastWord == "XVI" || lastWord == "XVII" || lastWord == "XVIII" || lastWord == "XIX" || lastWord == "XX") {
-        lastWord = lineSplit[lineSplit.length - 2].toUpperCase() + " " + lastWord;
-        lineSplit.splice(lineSplit.length - 2, 2);
-    } else {
-        lineSplit.splice(lineSplit.length - 1, 1);
+const generateFileName = (lineContent: string) => {
+    if (formatName.value) {
+        lineContent = formatLineText(lineContent);
     }
 
-    let firstWord = lineSplit.join(" ")
-    let fullLine = lastWord + ", " + firstWord;
-    console.log(fullLine)
-    return fullLine.toUpperCase();
+    lineContent = formatLineWithPrefixSuffix(lineContent, prefixValue.value, suffixValue.value, seperatorValue.value);
+
+    return lineContent + ".pdf";
 }
 
 </script>
@@ -102,6 +107,7 @@ const formatSelectedLineText = (selectedLineText: string) => {
 Add tooltip for the Split button stating that this will split the PDF into multiple PDFs based on the number of pages in the PDF.
 Add preview of what all the PDFs will be named based on the options selected.
 Add option to download each PDF individually or as a zip file.
+Add clear button for the formating inputs to go back to defaults (blank, blank, " - ")
 -->
 <template class="m-2">
     <div class="flex flex-column">
@@ -125,16 +131,21 @@ Add option to download each PDF individually or as a zip file.
         </div>
         <div class="flex flex-row justify-content-between flex-wrap mt-3">
             <!-- File Name Preview -->
-            <p class="flex align-items-center justify-content-center">First File Name Preview: {{ pdfNamePreview() }}</p>
+            <p v-if="store.getSelectedLineContent()" class="flex align-items-center justify-content-center">First File Name Preview: <b>{{ pdfNamePreview() }}</b></p>
+            <p v-else><i>Select line to see preview of file name...</i></p>
             <Button class="flex align-items-center justify-content-center" type="button" label="Split" icon="pi pi-check" @click="closeDialog" autofocus :disabled="store.getSelectedLineIndex() == -1"></Button>
         </div>
     </div>
 
 </template>
 
-<style>
+<style scoped="true">
 .p-dialog .p-dialog-footer {
     padding: 1.75rem 1.5rem 1rem 1.5rem;
+}
+
+b {
+    margin-left: 0.5rem;
 }
 </style>
 
