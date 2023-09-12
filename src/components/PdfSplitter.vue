@@ -46,8 +46,7 @@ onMounted(() => {
 
 //when selectedLine changes, console output
 watch(() => selectedLineIndex.value, (val) => {
-    console.log(val);
-    store.setSelectedLineIndex(val);
+    store.setSelectedLine(val, firstPageContent.value[val].lineContent);
 });
 
 const getFirstPageContent = () => {

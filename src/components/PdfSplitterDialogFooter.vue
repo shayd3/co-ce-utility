@@ -13,11 +13,8 @@ const dialogRef = inject("dialogRef") as any;
 
 const prefixValue = ref("");
 const suffixValue = ref("");
-const seperator = ref(" - ");
-const selectedLineText = ref("");
-
+const seperatorValue = ref(" - ");
 const formatName = ref(true);
-
 
 const ToolTips = {
     PREFIX_TIP: "Text before selected line text",
@@ -25,7 +22,6 @@ const ToolTips = {
     SEPERATOR_TIP: "Chracter/Text to seperate prefix, selected line text, and suffix. I.e. - will produce 'Prefix - Selected Line Text - Suffix' \n Default: ' - '",
     FORMAT_NAME_TIP: "Format selected line text to name format (Last, First Middle. Suffix). May yeild unexpected results if used on other text."
 }
-
 
 const closeDialog = async () => {
     await splitPdf();
@@ -61,12 +57,48 @@ const splitPdf = async () => {
 
 }
 
+const pdfNamePreview = () => {
+    let selectedLineContent = store.getSelectedLineContent();
 
+    if (formatName.value) {
+        selectedLineContent = formatSelectedLineText(selectedLineContent);
+    }
+
+    if(prefixValue.value != "") {
+        selectedLineContent = prefixValue.value + seperatorValue.value + selectedLineContent;
+    }
+
+    if(suffixValue.value != "") {
+        selectedLineContent = selectedLineContent + seperatorValue.value + suffixValue.value;
+    }
+
+    return selectedLineContent
+}
+
+/**
+ * Format selected line text to name format (Last, First Middle. Suffix)
+ *
+ * @param selectedLineText
+ */
+const formatSelectedLineText = (selectedLineText: string) => {
+    let lineSplit = selectedLineText.split(" ");
+    let lastWord = lineSplit[lineSplit.length - 1].toUpperCase();
+    if(lastWord == "JR" || lastWord == "SR" || lastWord == "I" || lastWord == "II" || lastWord == "III" || lastWord == "IV" || lastWord == "V" || lastWord == "VI" || lastWord == "VII" || lastWord == "VIII" || lastWord == "IX" || lastWord == "X" || lastWord == "XI" || lastWord == "XII" || lastWord == "XIII" || lastWord == "XIV" || lastWord == "XV" || lastWord == "XVI" || lastWord == "XVII" || lastWord == "XVIII" || lastWord == "XIX" || lastWord == "XX") {
+        lastWord = lineSplit[lineSplit.length - 2].toUpperCase() + " " + lastWord;
+        lineSplit.splice(lineSplit.length - 2, 2);
+    } else {
+        lineSplit.splice(lineSplit.length - 1, 1);
+    }
+
+    let firstWord = lineSplit.join(" ")
+    let fullLine = lastWord + ", " + firstWord;
+    console.log(fullLine)
+    return fullLine.toUpperCase();
+}
 
 </script>
 
 <!-- TODO:
-Add name preview as inputs and options are changed (this will be an example of the first page found in the PDF)
 Add tooltip for the Split button stating that this will split the PDF into multiple PDFs based on the number of pages in the PDF.
 Add preview of what all the PDFs will be named based on the options selected.
 Add option to download each PDF individually or as a zip file.
@@ -83,7 +115,7 @@ Add option to download each PDF individually or as a zip file.
                 <label for="suffix">Suffix</label>
             </span>
             <span class="p-float-label" v-tooltip.top="ToolTips.SEPERATOR_TIP">
-                <InputText id="seperator" v-model="seperator" />
+                <InputText id="seperator" v-model="seperatorValue" />
                 <label for="seperator">Seperator</label>
             </span>
             <div v-tooltip.top="ToolTips.FORMAT_NAME_TIP" class="flex align-self-center">
@@ -93,7 +125,7 @@ Add option to download each PDF individually or as a zip file.
         </div>
         <div class="flex flex-row justify-content-between flex-wrap mt-3">
             <!-- File Name Preview -->
-            <p class="flex align-items-center justify-content-center">First File Name Preview: {{ getFirstFileNamePreview }}</p>
+            <p class="flex align-items-center justify-content-center">First File Name Preview: {{ pdfNamePreview() }}</p>
             <Button class="flex align-items-center justify-content-center" type="button" label="Split" icon="pi pi-check" @click="closeDialog" autofocus :disabled="store.getSelectedLineIndex() == -1"></Button>
         </div>
     </div>

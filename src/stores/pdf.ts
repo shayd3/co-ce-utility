@@ -4,6 +4,7 @@ import { ref } from 'vue';
 export const usePdfStore = defineStore('pdf', () => {
     const pdfFile = ref<File | null>(null);
     const selectedLineIndex = ref<number>(-1);
+    const selectedLineContent = ref<string>('');
 
     const setPdfFile = (file: File) => {
         pdfFile.value = file;
@@ -12,6 +13,15 @@ export const usePdfStore = defineStore('pdf', () => {
     const getPdfFile = () => {
         return pdfFile.value;
     };
+
+    const setSelectedLine = (index: number, lineContent : string) => {
+        selectedLineIndex.value = index;
+        selectedLineContent.value = lineContent;
+    }
+
+    const getSelectedLineContent = () => {
+        return selectedLineContent.value;
+    }
 
     const setSelectedLineIndex = (index: number) => {
         selectedLineIndex.value = index;
@@ -31,7 +41,8 @@ export const usePdfStore = defineStore('pdf', () => {
     function clearPdf() {
         pdfFile.value = null;
         selectedLineIndex.value = -1;
+        selectedLineContent.value = '';
     };
-    return { setPdfFile, getPdfFile, setSelectedLineIndex, getSelectedLineIndex, getPdfBytes, clearPdf };
+    return { setPdfFile, getPdfFile, setSelectedLineIndex, setSelectedLine, getSelectedLineContent, getSelectedLineIndex, getPdfBytes, clearPdf };
     }
 );
