@@ -8,12 +8,14 @@ import type { TextItem } from 'pdfjs-dist/types/src/display/api';
 import { formatLineText, formatLineWithPrefixSuffix } from "@/utils/splitter";
 
 import { usePdfStore } from '@/stores/pdf';
+import { useSignatureStore } from '@/stores/signature';
 import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 import Checkbox from 'primevue/checkbox';
 import { useDialog } from 'primevue/usedialog';
 
 const store = usePdfStore();
+const signatureStore = useSignatureStore();
 const dialogRef = inject("dialogRef") as any;
 const PdfSignatureAdder = defineAsyncComponent(() => import('./PdfSignatureAdder.vue'))
 const dialog = useDialog();
@@ -154,7 +156,7 @@ Add input to allow re-naming of the resulting zip file. Make this a 2-way bind b
             </div>
         </div>
         <div class="flex flex-row">
-            <Button type="button" label="Add Signature" icon="pi pi-plus" @click="onSignatureAdd" />
+            <Button type="button" label="Add Signature" icon="pi pi-plus" :disabled="!signatureStore.signature" @click="onSignatureAdd" />
         </div>
         <div class="flex flex-row justify-content-between flex-wrap">
             <!-- File Name Preview -->
