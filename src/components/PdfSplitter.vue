@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue';
-
 import { usePdfStore } from '@/stores/pdf';
 import type { TextItem } from 'pdfjs-dist/types/src/display/api';
 import * as PDFJS from "pdfjs-dist";
@@ -23,6 +22,7 @@ const store = usePdfStore();
 const firstPageContent = ref([]) as { value: PageLine[] };
 const selectedLineIndex = ref();
 
+
 // Get each line from first page of PDF
 onMounted(() => {
     let pdfArrayBuffer = store.getPdfBytes();
@@ -43,6 +43,7 @@ onMounted(() => {
     });
 
 });
+
 
 //when selectedLine changes, console output
 watch(() => selectedLineIndex.value, (val) => {

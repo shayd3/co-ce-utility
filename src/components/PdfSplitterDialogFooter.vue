@@ -1,18 +1,22 @@
 <script setup lang="ts">
-import { inject, ref } from "vue";
-import { usePdfStore } from '@/stores/pdf';
+import { inject, ref, defineAsyncComponent } from "vue";
 import * as fs from 'file-saver';
 import JSZip from "jszip";
-import InputText from 'primevue/inputtext';
-import Button from 'primevue/button';
-import Checkbox from 'primevue/checkbox';
 import { PDFDocument } from "pdf-lib";
 import * as PDFJS from "pdfjs-dist";
 import type { TextItem } from 'pdfjs-dist/types/src/display/api';
 import { formatLineText, formatLineWithPrefixSuffix } from "@/utils/splitter";
 
+import { usePdfStore } from '@/stores/pdf';
+import InputText from 'primevue/inputtext';
+import Button from 'primevue/button';
+import Checkbox from 'primevue/checkbox';
+import { useDialog } from 'primevue/usedialog';
+
 const store = usePdfStore();
 const dialogRef = inject("dialogRef") as any;
+const PdfSignatureAdder = defineAsyncComponent(() => import('./PdfSignatureAdder.vue'))
+const dialog = useDialog();
 
 const prefixValue = ref("");
 const suffixValue = ref("");
@@ -24,6 +28,25 @@ const ToolTips = {
     SUFFIX_TIP: "Text after selected line text",
     SEPERATOR_TIP: "Chracter/Text to seperate prefix, selected line text, and suffix. I.e. - will produce 'Prefix - Selected Line Text - Suffix' \n Default: ' - '",
     FORMAT_NAME_TIP: "Format selected line text to name format (Last, First Middle. Suffix). May yeild unexpected results if used on other text."
+}
+
+
+
+const onSignatureAdd = () => {
+    dialog.open(PdfSignatureAdder, {
+        props: {
+            header: 'Add Signature',
+            style: {
+                width: '70vw',
+            },
+            breakpoints: {
+                '960px': '75vw',
+                '640px': '90vw'
+            },
+            modal: true,
+            draggable: false
+        }
+    });
 }
 
 const closeDialog = async () => {
@@ -110,8 +133,8 @@ Add option to download each PDF individually or as a zip file.
 Add clear button for the formating inputs to go back to defaults (blank, blank, " - ")
 Add input to allow re-naming of the resulting zip file. Make this a 2-way bind between the function call or manually typing in the input.
 -->
-<template class="m-2">
-    <div class="flex flex-column">
+<template class="m2">
+    <div class="flex flex-column pt-4 gap-2">
         <div class="flex flex-row gap-2">
             <span class="p-float-label" v-tooltip.top="ToolTips.PREFIX_TIP">
                 <InputText id="prefix" v-model="prefixValue" />
@@ -130,7 +153,10 @@ Add input to allow re-naming of the resulting zip file. Make this a 2-way bind b
                 <label for="formatName" class="mr-2"> Format Name? </label>
             </div>
         </div>
-        <div class="flex flex-row justify-content-between flex-wrap mt-3">
+        <div class="flex flex-row">
+            <Button type="button" label="Add Signature" icon="pi pi-plus" @click="onSignatureAdd" />
+        </div>
+        <div class="flex flex-row justify-content-between flex-wrap">
             <!-- File Name Preview -->
             <p v-if="store.getSelectedLineContent()" class="flex align-items-center justify-content-center">First File Name Preview: <b>{{ pdfNamePreview() }}</b></p>
             <p v-else><i>Select line to see preview of file name...</i></p>
