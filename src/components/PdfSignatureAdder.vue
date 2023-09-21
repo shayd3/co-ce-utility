@@ -21,56 +21,63 @@ const ToolTips = {
     SIGNATURE_ADDER_TIP: "Draw a box around the area where you want the signature to be placed. \n\nNote: The signature will be placed on every page of the PDF."
 }
 
+let pdfPage = ref<PDFJS.PDFPageProxy | null>();
 let pdfCanvas = ref<CanvasRenderingContext2D | null>();
+let startX = 0;
+let startY = 0;
 
-// Get the first page of the PDF and render the page to a canvas
 onMounted(() => {
     let pdfArrayBuffer = pdfStore.getPdfBytes();
     pdfArrayBuffer.then((arrayBuffer) => {
         let pdfBytes = new Uint8Array(arrayBuffer!);
         PDFJS.getDocument(pdfBytes!).promise.then((pdfDoc) => {
             pdfDoc.getPage(1).then((page) => {
+                pdfPage.value = page;
                 let canvas = document.getElementById('pdf-canvas') as HTMLCanvasElement;
                 pdfCanvas.value = canvas.getContext('2d')!;
                 let viewport = page.getViewport({ scale: 1.0 });
                 canvas.height = viewport.height;
                 canvas.width = viewport.width;
                 page.render({ canvasContext: pdfCanvas.value, viewport: viewport });
-
             });
         });
     });
 });
 
-// Handle mouse events on the canvas
+// TODO: Fix issue with PDF becoming not visible after clicking on the canvas
 const handleMouseDown = (event: MouseEvent) => {
-    let rect = pdfCanvas.value!.canvas.getBoundingClientRect();
-    let x = Math.ceil(event.clientX - rect.left);
-    let y = Math.ceil(event.clientY - rect.top);
-    console.log("Mouse down on: " + x + ", " + y);
+    startX = event.offsetX;
+    startY = event.offsetY;
 }
 
 const handleMouseUp = (event: MouseEvent) => {
-    let rect = pdfCanvas.value!.canvas.getBoundingClientRect();
-    let x = Math.ceil(event.clientX - rect.left);
-    let y = Math.ceil(event.clientY - rect.top);
-    console.log("Mouse up on: " + x + ", " + y);
+    let endX = event.offsetX;
+    let endY = event.offsetY;
+    let width = endX - startX;
+    let height = endY - startY;
+
+    pdfCanvas.value!.clearRect(0, 0, pdfCanvas.value!.canvas.width, pdfCanvas.value!.canvas.height);
+    pdfCanvas.value!.strokeRect(startX, startY, width, height);
 }
 
 const handleMouseMove = (event: MouseEvent) => {
-    let rect = pdfCanvas.value!.canvas.getBoundingClientRect();
-    let x = Math.ceil(event.clientX - rect.left);
-    let y = Math.ceil(event.clientY - rect.top);
-    console.log("Mouse move on: " + x + ", " + y);
-}
+    if (event.buttons === 1) {
+        let endX = event.offsetX;
+        let endY = event.offsetY;
+        let width = endX - startX;
+        let height = endY - startY;
 
+        pdfCanvas.value!.clearRect(0, 0, pdfCanvas.value!.canvas.width, pdfCanvas.value!.canvas.height);
+        pdfCanvas.value!.strokeRect(startX, startY, width, height);
+    }
+}
 
 </script>
 
 <template>
     <div>
         <div class="p-d-flex p-flex-column p-ai-center p-mt-2">
-            <canvas class="border-solid" id="pdf-canvas" ref="pdfCanvas" width="1000" height="1000" v-on:mousedown="handleMouseDown" v-on:mouseup="handleMouseUp" v-on:mousemove="handleMouseMove"></canvas>
+            <canvas class="border-solid" id="pdf-canvas" ref="pdfCanvas" v-on:mousedown="handleMouseDown" v-on:mouseup="handleMouseUp" v-on:mousemove="handleMouseMove"></canvas>
         </div>
     </div>
 </template>
