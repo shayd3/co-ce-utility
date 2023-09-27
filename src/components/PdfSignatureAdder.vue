@@ -23,25 +23,28 @@ const ToolTips = {
 
 let pdfPage = ref<PDFJS.PDFPageProxy | null>();
 let pdfCanvas = ref<CanvasRenderingContext2D | null>();
+let squareCtx = ref<CanvasRenderingContext2D | null>();
 let startX = 0;
 let startY = 0;
 
-onMounted(() => {
-    let pdfArrayBuffer = pdfStore.getPdfBytes();
-    pdfArrayBuffer.then((arrayBuffer) => {
-        let pdfBytes = new Uint8Array(arrayBuffer!);
-        PDFJS.getDocument(pdfBytes!).promise.then((pdfDoc) => {
-            pdfDoc.getPage(1).then((page) => {
-                pdfPage.value = page;
-                let canvas = document.getElementById('pdf-canvas') as HTMLCanvasElement;
-                pdfCanvas.value = canvas.getContext('2d')!;
-                let viewport = page.getViewport({ scale: 1.0 });
-                canvas.height = viewport.height;
-                canvas.width = viewport.width;
-                page.render({ canvasContext: pdfCanvas.value, viewport: viewport });
-            });
-        });
-    });
+onMounted(async () => {
+    let pdfArrayBuffer = await pdfStore.getPdfBytes();
+    let pdfBytes = new Uint8Array(pdfArrayBuffer!);
+    let pdfDocumentProxy = await PDFJS.getDocument(pdfBytes!).promise;
+    let pdfPageProxy = await pdfDocumentProxy.getPage(1)
+
+    pdfPage.value = pdfPageProxy
+    squareCtx.value = (document.getElementById('pdf-canvas') as HTMLCanvasElement).getContext('2d')!;
+    let canvas = document.getElementById('pdf-canvas') as HTMLCanvasElement;
+    pdfCanvas.value = canvas.getContext('2d')!;
+    let viewport = pdfPageProxy.getViewport({ scale: 1.0 });
+    canvas.height = viewport.height;
+    canvas.width = viewport.width;
+    // set canvas fill color to black
+    pdfCanvas.value!.fillStyle = "#000000";
+    // make fill color transparent
+    pdfCanvas.value!.globalAlpha = 0.3;
+    pdfPageProxy.render({ canvasContext: pdfCanvas.value, viewport: viewport })
 });
 
 // TODO: Fix issue with PDF becoming not visible after clicking on the canvas
@@ -56,8 +59,9 @@ const handleMouseUp = (event: MouseEvent) => {
     let width = endX - startX;
     let height = endY - startY;
 
-    pdfCanvas.value!.clearRect(0, 0, pdfCanvas.value!.canvas.width, pdfCanvas.value!.canvas.height);
-    pdfCanvas.value!.strokeRect(startX, startY, width, height);
+    squareCtx.value!.clearRect(0, 0, pdfCanvas.value!.canvas.width, pdfCanvas.value!.canvas.height);
+    squareCtx.value!.strokeRect(startX, startY, width, height);
+    squareCtx.value!.fillRect(startX, startY, width, height);
 }
 
 const handleMouseMove = (event: MouseEvent) => {
@@ -67,8 +71,11 @@ const handleMouseMove = (event: MouseEvent) => {
         let width = endX - startX;
         let height = endY - startY;
 
-        pdfCanvas.value!.clearRect(0, 0, pdfCanvas.value!.canvas.width, pdfCanvas.value!.canvas.height);
-        pdfCanvas.value!.strokeRect(startX, startY, width, height);
+        squareCtx.value!.clearRect(0, 0, pdfCanvas.value!.canvas.width, pdfCanvas.value!.canvas.height);
+
+        squareCtx.value!.strokeRect(startX, startY, width, height);
+        squareCtx.value!.fillRect(startX, startY, width, height);
+
     }
 }
 
