@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { inject, ref, defineAsyncComponent } from "vue";
+import { inject, ref, defineAsyncComponent, markRaw } from "vue";
 import * as fs from 'file-saver';
 import JSZip from "jszip";
 import { PDFDocument } from "pdf-lib";
@@ -18,6 +18,8 @@ const store = usePdfStore();
 const signatureStore = useSignatureStore();
 const dialogRef = inject("dialogRef") as any;
 const PdfSignatureAdder = defineAsyncComponent(() => import('./PdfSignatureAdder.vue'))
+const PdfSignatureAdderFooter = defineAsyncComponent(() => import('./PdfSignatureAdderFooter.vue'))
+
 const dialog = useDialog();
 
 const prefixValue = ref("");
@@ -32,8 +34,6 @@ const ToolTips = {
     FORMAT_NAME_TIP: "Format selected line text to name format (Last, First Middle. Suffix). May yeild unexpected results if used on other text."
 }
 
-
-
 const onSignatureAdd = () => {
     dialog.open(PdfSignatureAdder, {
         props: {
@@ -47,6 +47,9 @@ const onSignatureAdd = () => {
             },
             modal: true,
             draggable: false
+        },
+        templates: {
+            footer: markRaw(PdfSignatureAdderFooter)
         }
     });
 }
