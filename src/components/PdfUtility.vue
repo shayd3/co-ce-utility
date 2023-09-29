@@ -54,9 +54,6 @@ const onPdfSplit = () => {
             <h2>PDF Splitter</h2>
             <Button label="Split PDF" icon="pi pi-arrow-right" severity="info" raised @click="onPdfSplit" :disabled="!usePdfStore().getPdfFile()" />
         </div>
-        <div id="pdfSplitterWithSignature">
-            <h2>PDF Splitter with Signature</h2>
-        </div>
     </div>
     <DynamicDialog />
 </template>

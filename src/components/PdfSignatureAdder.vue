@@ -95,7 +95,7 @@ const handleMouseMove = (event: MouseEvent) => {
 <template>
     <div>
         <div class="p-d-flex p-flex-column p-ai-center p-mt-2">
-            <canvas class="border-solid" id="pdf-canvas" ref="pdfCanvas" v-on:mousedown="handleMouseDown" v-on:mouseup="handleMouseUp" v-on:mousemove="handleMouseMove"></canvas>
+            <canvas class="border-solid" id="pdf-canvas" ref="pdfCanvas" v-on:mousedown="handleMouseDown" v-on:mouseup="handleMouseUp" v-on:mousemove="handleMouseMove" />
         </div>
     </div>
 </template>
