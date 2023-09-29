@@ -46,6 +46,8 @@ const handleMouseDown = (event: MouseEvent) => {
     event.stopPropagation();
     startX = event.offsetX;
     startY = event.offsetY;
+    signatureStore.setStartX(startX);
+    signatureStore.setStartY(startY);
 }
 const handleMouseUp = (event: MouseEvent) => {
     let endX = event.offsetX;
@@ -55,6 +57,8 @@ const handleMouseUp = (event: MouseEvent) => {
     event.preventDefault();
     event.stopPropagation();
     pdfCanvas.value!.strokeRect(startX, startY, width, height);
+    signatureStore.setEndX(endX);
+    signatureStore.setEndY(endY);
 }
 const handleMouseMove = (event: MouseEvent) => {
     if (event.buttons === 1) {

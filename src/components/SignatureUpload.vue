@@ -29,7 +29,7 @@ const generateImgBlob = (bytes: Uint8Array | undefined | null) => {
 }
 
 const onClearSignature = () => {
-    store.clearSignature()
+    store.clear()
 }
 </script>
 
