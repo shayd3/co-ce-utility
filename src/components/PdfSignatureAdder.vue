@@ -47,7 +47,6 @@ onMounted(async () => {
 
 const saveCanvasState = () => {
     if (pdfCanvas.value) {
-        console.log("Saving state...")
         var canvasPic = new Image();
         canvasPic.src = pdfCanvas.value!.canvas.toDataURL("image/png");
         pdfImage.value = canvasPic;
