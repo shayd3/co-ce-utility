@@ -95,6 +95,7 @@ const splitPdf = async () => {
     });
 }
 
+// TODO: Fix placement issue with the image
 const addSignatureToPage = async(page: PDFPage) => {
     let signatureImage = await page.doc.embedPng(signatureStore.signature!);
     let scaledSignature = signatureImage.scaleToFit(signatureStore.getWidth(), signatureStore.getHeight())
