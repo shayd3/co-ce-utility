@@ -5,6 +5,7 @@ import JSZip from "jszip";
 import { PDFDocument, PDFPage } from "pdf-lib";
 import * as PDFJS from "pdfjs-dist";
 import type { TextItem } from 'pdfjs-dist/types/src/display/api';
+import { PageViewport } from "pdfjs-dist/types/src/display/display_utils";
 import { formatLineText, formatLineWithPrefixSuffix } from "@/utils/splitter";
 
 import { usePdfStore } from '@/stores/pdf';
@@ -99,9 +100,13 @@ const splitPdf = async () => {
 const addSignatureToPage = async(page: PDFPage) => {
     let signatureImage = await page.doc.embedPng(signatureStore.signature!);
     let scaledSignature = signatureImage.scaleToFit(signatureStore.getWidth(), signatureStore.getHeight())
+    let viewport = store.getViewport() as PageViewport;
+    let pdfPoints = viewport.convertToPdfPoint(signatureStore.getStartX(), signatureStore.getEndY())
+    console.log("x: " + signatureStore.getStartX() + " y: " + signatureStore.getEndY())
+    console.log("pdfPoints: " + pdfPoints)
     page.drawImage(signatureImage, {
-        x: signatureStore.getStartX(),
-        y: signatureStore.getStartY(),
+        x: pdfPoints[0],
+        y: pdfPoints[1],
         width: scaledSignature.width,
         height: scaledSignature.height
     });

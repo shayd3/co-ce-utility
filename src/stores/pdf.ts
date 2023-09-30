@@ -3,6 +3,7 @@ import { ref } from 'vue';
 
 export const usePdfStore = defineStore('pdf', () => {
     const pdfFile = ref<File | null>(null);
+    const pdfViewport = ref<any>(null);
     const selectedLineIndex = ref<number>(-1);
     const selectedLineContent = ref<string>('');
 
@@ -38,11 +39,19 @@ export const usePdfStore = defineStore('pdf', () => {
         return null;
     };
 
+    const setViewport = (viewport: any) => {
+        pdfViewport.value = viewport;
+    }
+
+    const getViewport = () => {
+        return pdfViewport.value;
+    }
+
     function clearPdf() {
         pdfFile.value = null;
         selectedLineIndex.value = -1;
         selectedLineContent.value = '';
     };
-    return { setPdfFile, getPdfFile, setSelectedLineIndex, setSelectedLine, getSelectedLineContent, getSelectedLineIndex, getPdfBytes, clearPdf };
+    return { setPdfFile, getPdfFile, setSelectedLineIndex, setSelectedLine, getSelectedLineContent, getSelectedLineIndex, getPdfBytes, setViewport, getViewport, clearPdf };
     }
 );

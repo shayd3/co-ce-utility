@@ -22,7 +22,9 @@ onMounted(async () => {
     pdfPage.value = pdfPageProxy
     let canvas = document.getElementById('pdf-canvas') as HTMLCanvasElement;
     pdfCanvas.value = canvas.getContext('2d')!;
+
     let viewport = pdfPageProxy.getViewport({ scale: 1.0 });
+    pdfStore.setViewport(viewport)
 
     canvas.height = viewport.height;
     canvas.width = viewport.width;
