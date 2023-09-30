@@ -51,6 +51,7 @@ const handleMouseDown = (event: MouseEvent) => {
     signatureStore.setStartX(startX);
     signatureStore.setStartY(startY);
 }
+
 const handleMouseUp = (event: MouseEvent) => {
     let endX = event.offsetX;
     let endY = event.offsetY;
@@ -60,11 +61,16 @@ const handleMouseUp = (event: MouseEvent) => {
     event.preventDefault();
     event.stopPropagation();
     pdfCanvas.value!.strokeRect(startX, startY, width, height);
-    signatureStore.setEndX(endX);
-    signatureStore.setEndY(endY);
+
+    let { transformedStartX, transformedStartY, transformedEndX, transformedEndY } = transformCoordinates(startX, startY, endX, endY);
+    signatureStore.setStartX(transformedStartX);
+    signatureStore.setStartY(transformedStartY);
+    signatureStore.setEndX(transformedEndX);
+    signatureStore.setEndY(transformedEndY);
     signatureStore.setWidth(width);
     signatureStore.setHeight(height);
 }
+
 const handleMouseMove = (event: MouseEvent) => {
     if (event.buttons === 1) {
         let endX = event.offsetX;
@@ -81,10 +87,36 @@ const handleMouseMove = (event: MouseEvent) => {
         pdfCanvas.value!.stroke()
     }
 }
+
+// TODO: Fix issue where image flips when drawn from bottom right to top left
+const transformCoordinates = (startX: number, startY: number, endX: number, endY: number) => {
+    let transformedStartX = startX;
+    let transformedStartY = startY;
+    let transformedEndX = endX;
+    let transformedEndY = endY;
+
+    if (startX > endX) {
+        transformedStartX = endX;
+        transformedEndX = startX;
+    }
+
+    if (startY > endY) {
+        transformedStartY = endY;
+        transformedEndY = startY;
+    }
+
+    return {
+        transformedStartX,
+        transformedStartY,
+        transformedEndX,
+        transformedEndY
+    }
+}
 </script>
 
 <template>
     <div>
+        <Message severity="success" :closable="false">Draw a box where you want to add your signature!<br><br>Note: </Message>
         <div class="p-d-flex p-flex-column p-ai-center p-mt-2">
             <canvas class="border-solid" id="pdf-canvas" ref="pdfCanvas" v-on:mousedown="handleMouseDown" v-on:mouseup="handleMouseUp" v-on:mousemove="handleMouseMove" />
         </div>

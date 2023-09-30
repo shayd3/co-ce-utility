@@ -28,7 +28,7 @@ const hasAreaDrawn = () => {
 </script>
 
 <template>
-        <div>
+        <div class="mt-3">
             <Button type="button" v-tooltip.top="ToolTips.SIGNATURE_ADDER_TIP" label="Add Signature" icon="pi pi-check" @click="closeDialog" :disabled="!hasAreaDrawn()"></Button>
         </div>
 </template>
