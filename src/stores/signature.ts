@@ -7,6 +7,8 @@ export const useSignatureStore = defineStore('signature', () => {
     const startY = ref<number>(0);
     const endX = ref<number>(0);
     const endY = ref<number>(0);
+    const width = ref<number>(0);
+    const height = ref<number>(0);
 
     const setSignature = (signatureData: Uint8Array) => {
         signature.value = signatureData;
@@ -29,6 +31,12 @@ export const useSignatureStore = defineStore('signature', () => {
     function setEndY(y: number) {
         endY.value = y;
     }
+    function setWidth(w: number) {
+        width.value = w;
+    }
+    function setHeight(h: number) {
+        height.value = h;
+    }
     function getStartX() {
         return startX.value;
     }
@@ -41,13 +49,21 @@ export const useSignatureStore = defineStore('signature', () => {
     function getEndY() {
         return endY.value;
     }
+    function getWidth() {
+        return width.value;
+    }
+    function getHeight() {
+        return height.value;
+    }
     function clear() {
         signature.value = null;
         startX.value = 0;
         startY.value = 0;
         endX.value = 0;
         endY.value = 0;
+        width.value = 0;
+        height.value = 0;
     }
-    return { signature, setSignature, getSignature, clearSignature, setStartX, setStartY, setEndX, setEndY, getStartX, getStartY, getEndX, getEndY, clear };
+    return { signature, setSignature, getSignature, clearSignature, setStartX, setStartY, setEndX, setEndY, setWidth, setHeight, getStartX, getStartY, getEndX, getEndY, getWidth, getHeight, clear };
     }
 );

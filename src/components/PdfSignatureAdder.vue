@@ -52,13 +52,16 @@ const handleMouseDown = (event: MouseEvent) => {
 const handleMouseUp = (event: MouseEvent) => {
     let endX = event.offsetX;
     let endY = event.offsetY;
-    let width = endX - startX;
-    let height = endY - startY;
+    let width = Math.abs(endX - startX);
+    let height = Math.abs(endY - startY);
+
     event.preventDefault();
     event.stopPropagation();
     pdfCanvas.value!.strokeRect(startX, startY, width, height);
     signatureStore.setEndX(endX);
     signatureStore.setEndY(endY);
+    signatureStore.setWidth(width);
+    signatureStore.setHeight(height);
 }
 const handleMouseMove = (event: MouseEvent) => {
     if (event.buttons === 1) {
@@ -68,6 +71,8 @@ const handleMouseMove = (event: MouseEvent) => {
         let height = endY - startY;
         event.preventDefault();
         event.stopPropagation();
+
+        console.log(startX, startY, width, height)
 
         pdfCanvas.value!.clearRect(0, 0, pdfCanvas.value!.canvas.width, pdfCanvas.value!.canvas.height);
         pdfCanvas.value!.drawImage(pdfImage.value!, 0, 0);
