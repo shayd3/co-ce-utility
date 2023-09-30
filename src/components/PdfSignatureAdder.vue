@@ -52,8 +52,8 @@ const handleMouseDown = (event: MouseEvent) => {
 const handleMouseUp = (event: MouseEvent) => {
     let endX = event.offsetX;
     let endY = event.offsetY;
-    let width = Math.abs(endX - startX);
-    let height = Math.abs(endY - startY);
+    let width = endX - startX;
+    let height = endY - startY;
 
     event.preventDefault();
     event.stopPropagation();
@@ -71,8 +71,6 @@ const handleMouseMove = (event: MouseEvent) => {
         let height = endY - startY;
         event.preventDefault();
         event.stopPropagation();
-
-        console.log(startX, startY, width, height)
 
         pdfCanvas.value!.clearRect(0, 0, pdfCanvas.value!.canvas.width, pdfCanvas.value!.canvas.height);
         pdfCanvas.value!.drawImage(pdfImage.value!, 0, 0);

@@ -2,7 +2,7 @@
 import { inject, ref, defineAsyncComponent, markRaw } from "vue";
 import * as fs from 'file-saver';
 import JSZip from "jszip";
-import { PDFDocument } from "pdf-lib";
+import { PDFDocument, PDFPage } from "pdf-lib";
 import * as PDFJS from "pdfjs-dist";
 import type { TextItem } from 'pdfjs-dist/types/src/display/api';
 import { formatLineText, formatLineWithPrefixSuffix } from "@/utils/splitter";
@@ -68,11 +68,14 @@ const splitPdf = async () => {
     let pdfDoc = await PDFDocument.load(pdfBytesUint8Array, {
         updateMetadata: false
     });
+    let signatureImage = await pdfDoc.embedPng(signatureStore.signature!);
+    let scaledSignature = signatureImage.scaleToFit(signatureStore.getWidth(), signatureStore.getHeight())
     let pdfTextContents = await getAllContentFromPdfPages();
 
     let pages = pdfDoc.getPages();
 
     for (let index = 0; index < pages.length; index++) {
+        addSignatureToPage(pages[index]);
         let newPdf = await PDFDocument.create();
         const copiedPage = await newPdf.copyPages(pdfDoc, [index]);
         newPdf.addPage(copiedPage[0]);
@@ -90,7 +93,17 @@ const splitPdf = async () => {
     zipFile.generateAsync({ type: "blob" }).then(function (content) {
         fs.saveAs(content, "splitPDF.zip");
     });
+}
 
+const addSignatureToPage = async(page: PDFPage) => {
+    let signatureImage = await page.doc.embedPng(signatureStore.signature!);
+    let scaledSignature = signatureImage.scaleToFit(signatureStore.getWidth(), signatureStore.getHeight())
+    page.drawImage(signatureImage, {
+        x: signatureStore.getStartX(),
+        y: signatureStore.getStartY(),
+        width: scaledSignature.width,
+        height: scaledSignature.height
+    });
 }
 
 const getAllContentFromPdfPages = async() => {
