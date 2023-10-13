@@ -115,6 +115,7 @@ const addSignatureToPage = async(page: PDFPage) => {
 
 // Returns the x and y points in PDF Points to mimick user drawing box from top left to bottom right.
 // Pdf points need to start from the bottom right of box
+// TODO: Figure out what is rotating the image 180 degrees and offcentering the image when not drawn top left to bottom right
 const transformPdfPoints = (startX: number, startY: number, endX: number, endY: number) => {
     let pdfPoints = [0,0]
     // Top left to bottom right
