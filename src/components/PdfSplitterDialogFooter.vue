@@ -96,20 +96,41 @@ const splitPdf = async () => {
     });
 }
 
-// TODO: Fix placement issue with the image
 const addSignatureToPage = async(page: PDFPage) => {
     let signatureImage = await page.doc.embedPng(signatureStore.signature!);
     let scaledSignature = signatureImage.scaleToFit(signatureStore.getWidth(), signatureStore.getHeight())
     let viewport = store.getViewport() as PageViewport;
-    let pdfPoints = viewport.convertToPdfPoint(signatureStore.getStartX(), signatureStore.getEndY())
-    console.log("x: " + signatureStore.getStartX() + " y: " + signatureStore.getEndY())
-    console.log("pdfPoints: " + pdfPoints)
+
+    let pdfPointsStart = viewport.convertToPdfPoint(signatureStore.getStartX(), signatureStore.getStartY())
+    let pdfPointsEnd = viewport.convertToPdfPoint(signatureStore.getEndX(), signatureStore.getEndY())
+    let pdfPoints = transformPdfPoints(pdfPointsStart[0], pdfPointsStart[1], pdfPointsEnd[0], pdfPointsEnd[1]);
+
     page.drawImage(signatureImage, {
         x: pdfPoints[0],
         y: pdfPoints[1],
         width: scaledSignature.width,
         height: scaledSignature.height
     });
+}
+
+// Returns the x and y points in PDF Points to mimick user drawing box from top left to bottom right.
+// Pdf points need to start from the bottom right of box
+const transformPdfPoints = (startX: number, startY: number, endX: number, endY: number) => {
+    let pdfPoints = [0,0]
+    // Top left to bottom right
+    if(startX < endX && startY > endY)
+        return [startX, endY]
+    // Bottom left to top right
+    if(startX < endX && startY < endY)
+        return [endX, startY]
+    // Bottom right to top left
+    if(startX > endX && startY < endY)
+        return [startX, startY]
+    // Top right to bottom left
+    if(startX > endX && startY > endY)
+        return [endX, endY]
+
+    return pdfPoints
 }
 
 const getAllContentFromPdfPages = async() => {
