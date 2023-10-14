@@ -2,7 +2,7 @@
 import { inject, ref, defineAsyncComponent, markRaw } from "vue";
 import * as fs from 'file-saver';
 import JSZip from "jszip";
-import { PDFDocument, PDFPage, degrees } from "pdf-lib";
+import { PDFDocument, PDFPage } from "pdf-lib";
 import * as PDFJS from "pdfjs-dist";
 import type { TextItem } from 'pdfjs-dist/types/src/display/api';
 import { PageViewport } from "pdfjs-dist/types/src/display/display_utils";
@@ -60,7 +60,14 @@ const closeDialog = async () => {
     dialogRef.value.close();
 };
 
-// Create a new PDF for each page in the PDF
+/**
+ * Splits the PDF into multiple PDFs based on the number of pages in the PDF.
+ * Each PDF will have the same signature on the same location on each page.
+ * The file name of each PDF will be the selected line text with the
+ * prefix, suffix, and seperator applied.
+ *
+ * @returns {Promise<void>}
+ */
 const splitPdf = async () => {
     let pdfBytes = await store.getPdfBytes();
     let zipFile = new JSZip();
@@ -69,10 +76,7 @@ const splitPdf = async () => {
     let pdfDoc = await PDFDocument.load(pdfBytesUint8Array, {
         updateMetadata: false
     });
-    let signatureImage = await pdfDoc.embedPng(signatureStore.signature!);
-    let scaledSignature = signatureImage.scaleToFit(signatureStore.getWidth(), signatureStore.getHeight())
     let pdfTextContents = await getAllContentFromPdfPages();
-
     let pages = pdfDoc.getPages();
 
     for (let index = 0; index < pages.length; index++) {
@@ -88,14 +92,18 @@ const splitPdf = async () => {
         zipFile.file(fileName, newPdfBytes);
 
     }
-    console.log("Finished splitting PDF")
 
-    // download zip
     zipFile.generateAsync({ type: "blob" }).then(function (content) {
         fs.saveAs(content, "splitPDF.zip");
     });
 }
 
+/**
+ * Adds the signature to the page at the location specified by the user.
+ *
+ * @param page
+ * @returns {Promise<void>}
+ */
 const addSignatureToPage = async(page: PDFPage) => {
     let signatureImage = await page.doc.embedPng(signatureStore.signature!);
     let scaledSignature = signatureImage.scaleToFit(signatureStore.getWidth(), signatureStore.getHeight())
@@ -113,8 +121,17 @@ const addSignatureToPage = async(page: PDFPage) => {
     });
 }
 
-// Returns the x and y points in PDF Points to mimick user drawing box from top left to bottom right.
-// Pdf points need to start from the bottom right of box.
+/**
+ * Transforms the points to be in the correct order so that the signature is
+ * placed in the correct location on the PDF.
+ *
+ * @param startX
+ * @param startY
+ * @param endX
+ * @param endY
+ *
+ * @returns {number[]}
+ */
 const transformPdfPoints = (startX: number, startY: number, endX: number, endY: number) => {
     let pdfPoints = [0,0]
     // Top left to bottom right
@@ -133,6 +150,11 @@ const transformPdfPoints = (startX: number, startY: number, endX: number, endY: 
     return pdfPoints
 }
 
+/**
+ * Gets all the text content from each page in the PDF.
+ *
+ * @returns {Promise<TextItem[][]>}
+ */
 const getAllContentFromPdfPages = async() => {
     let pdfBytes = await store.getPdfBytes();
     let pdfBytesUint8Array = new Uint8Array(pdfBytes!);
@@ -149,6 +171,12 @@ const getAllContentFromPdfPages = async() => {
     return pdfPagesItems;
 }
 
+/**
+ * Generates the file name for the PDF based on the selected line text and the
+ * prefix, suffix, and seperator.
+ *
+ * @returns {string}
+ */
 const pdfNamePreview = () => {
     let selectedLineContent = store.getSelectedLineContent();
 
@@ -159,6 +187,13 @@ const pdfNamePreview = () => {
     return generateFileName(selectedLineContent);
 }
 
+/**
+ * Generates the file name for the PDF based on the selected line text and the
+ * prefix, suffix, and seperator.
+ *
+ * @param {string} lineContent
+ * @returns {string}
+ */
 const generateFileName = (lineContent: string) => {
     if (formatName.value) {
         lineContent = formatLineText(lineContent);

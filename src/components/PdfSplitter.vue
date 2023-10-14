@@ -23,38 +23,49 @@ const firstPageContent = ref([]) as { value: PageLine[] };
 const selectedLineIndex = ref();
 
 
-// Get each line from first page of PDF
-onMounted(() => {
-    let pdfArrayBuffer = store.getPdfBytes();
-    pdfArrayBuffer.then((arrayBuffer) => {
-        let pdfBytes = new Uint8Array(arrayBuffer!);
-        PDFJS.getDocument(pdfBytes!).promise.then((pdfDoc) => {
-            pdfDoc.getPage(1).then((page) => {
-                page.getTextContent().then((textContent) => {
-                    firstPageContent.value = textContent.items.map((lineContent, index) =>  {
-                        return {
-                            index: index,
-                            lineContent: (lineContent as TextItem).str
-                        }
-                    });
-                });
-            });
-        });
+/**
+ * Gets all the text content from the first page of the PDF to display in the listbox.
+ *
+ * @returns {void}
+ */
+onMounted(async () => {
+    let pdfArrayBuffer = await store.getPdfBytes();
+    let pdfBytes = new Uint8Array(pdfArrayBuffer!);
+    let pdfDoc = await PDFJS.getDocument(pdfBytes!).promise;
+    let pdfFirstPage = await pdfDoc.getPage(1);
+    let pdfFirstPageTextContent = await pdfFirstPage.getTextContent()
+    firstPageContent.value = pdfFirstPageTextContent.items.map((lineContent, index) =>  {
+        return {
+            index: index,
+            lineContent: (lineContent as TextItem).str
+        }
     });
-
 });
 
-
-//when selectedLine changes, console output
+/**
+ * Watches for changes to the selected line index and sets the selected line in the store.
+ */
 watch(() => selectedLineIndex.value, (val) => {
     store.setSelectedLine(val, firstPageContent.value[val].lineContent);
 });
 
+/**
+ * Gets the first page content from the PDF.
+ *
+ * @returns {PageLine[]}
+ */
 const getFirstPageContent = () => {
     return cleanUpPageContent(firstPageContent.value);
 }
 
-// TODO: Split to helper function to clean up page content with a choosable filter
+/**
+ * Cleans up the page content by filtering out lines that are blank, dates, numbers, etc.
+ *
+ * TODO: Split to helper function to clean up page content with a choosable filter
+ *
+ * @param pageContent
+ * @returns {PageLine[]}
+ */
 const cleanUpPageContent = (pageContent: PageLine[]) => {
     // Filter out PageLine objects where PageLine.lineContent is empty or only whitespace
     let cleanedPageContent = pageContent.filter((pageLine) => {

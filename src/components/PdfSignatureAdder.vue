@@ -13,6 +13,9 @@ let pdfImage = ref<HTMLImageElement | undefined>();
 let startX = 0;
 let startY = 0;
 
+/**
+ * Load the pdf and render the first page
+ */
 onMounted(async () => {
     let pdfArrayBuffer = await pdfStore.getPdfBytes();
     let pdfBytes = new Uint8Array(pdfArrayBuffer!);
@@ -32,6 +35,12 @@ onMounted(async () => {
     pdfPageProxy.render({ canvasContext: pdfCanvas.value, viewport: viewport })
 });
 
+/**
+ * Saves the canvas state to an image so that it can be used later.
+ * This is used to draw the signature on the PDF.
+ *
+ * @returns {void}
+ */
 const saveCanvasState = () => {
     if (pdfCanvas.value) {
         var canvasPic = new Image();
@@ -40,6 +49,13 @@ const saveCanvasState = () => {
     }
 }
 
+/**
+ * Handles the mouse down event on the canvas.
+ *
+ * @param {MouseEvent} event
+ *
+ * @returns {void}
+ */
 const handleMouseDown = (event: MouseEvent) => {
     if (pdfImage.value === undefined) {
         saveCanvasState();
@@ -52,6 +68,13 @@ const handleMouseDown = (event: MouseEvent) => {
     signatureStore.setStartY(startY);
 }
 
+/**
+ * Handles the mouse up event on the canvas.
+ *
+ * @param {MouseEvent} event
+ *
+ * @returns {void}
+ */
 const handleMouseUp = (event: MouseEvent) => {
     let endX = event.offsetX;
     let endY = event.offsetY;
@@ -70,6 +93,13 @@ const handleMouseUp = (event: MouseEvent) => {
     signatureStore.setHeight(Math.abs(height));
 }
 
+/**
+ * Handles the mouse move event on the canvas.
+ *
+ * @param {MouseEvent} event
+ *
+ * @returns {void}
+ */
 const handleMouseMove = (event: MouseEvent) => {
     if (event.buttons === 1) {
         let endX = event.offsetX;

@@ -5,6 +5,12 @@ import { useSignatureStore } from '@/stores/signature';
 
 const store = useSignatureStore();
 
+/**
+ * Handles the file upload for the signature.
+ *
+ * @param event
+ * @returns
+ */
 const onSignatureFileSelect = (event: any) => {
     let file = event.files[0] as File;
     let reader = new FileReader();
@@ -20,6 +26,12 @@ const onSignatureFileSelect = (event: any) => {
     }
 }
 
+/**
+ * Generates a blob from the byte array.
+ *
+ * @param bytes
+ * @returns {string | null}
+ */
 const generateImgBlob = (bytes: Uint8Array | undefined | null) => {
     if (!bytes) {
         return null;
@@ -28,6 +40,11 @@ const generateImgBlob = (bytes: Uint8Array | undefined | null) => {
     return URL.createObjectURL(blob).toString();
 }
 
+/**
+ * Clears the signature from the store.
+ *
+ * @returns {void}
+ */
 const onClearSignature = () => {
     store.clear()
 }

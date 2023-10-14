@@ -5,12 +5,23 @@ import { usePdfStore } from '@/stores/pdf';
 
 const store = usePdfStore();
 
+/**
+ * Handles the file upload event.
+ *
+ * @returns {void}
+ * @param event
+ */
 const onFileSelect = (event: any) => {
     let file = event.files[0] as File;
 
     store.setPdfFile(file);
 }
 
+/**
+ * Clears the PDF file from the store.
+ *
+ * @returns {void}
+ */
 const onClearPdf = () => {
     store.clearPdf()
 }
