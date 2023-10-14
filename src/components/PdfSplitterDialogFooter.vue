@@ -2,7 +2,7 @@
 import { inject, ref, defineAsyncComponent, markRaw } from "vue";
 import * as fs from 'file-saver';
 import JSZip from "jszip";
-import { PDFDocument, PDFPage } from "pdf-lib";
+import { PDFDocument, PDFPage, degrees } from "pdf-lib";
 import * as PDFJS from "pdfjs-dist";
 import type { TextItem } from 'pdfjs-dist/types/src/display/api';
 import { PageViewport } from "pdfjs-dist/types/src/display/display_utils";
@@ -114,8 +114,7 @@ const addSignatureToPage = async(page: PDFPage) => {
 }
 
 // Returns the x and y points in PDF Points to mimick user drawing box from top left to bottom right.
-// Pdf points need to start from the bottom right of box
-// TODO: Figure out what is rotating the image 180 degrees and offcentering the image when not drawn top left to bottom right
+// Pdf points need to start from the bottom right of box.
 const transformPdfPoints = (startX: number, startY: number, endX: number, endY: number) => {
     let pdfPoints = [0,0]
     // Top left to bottom right
@@ -123,10 +122,10 @@ const transformPdfPoints = (startX: number, startY: number, endX: number, endY: 
         return [startX, endY]
     // Bottom left to top right
     if(startX < endX && startY < endY)
-        return [endX, startY]
+        return [startX, startY]
     // Bottom right to top left
     if(startX > endX && startY < endY)
-        return [startX, startY]
+        return [endX, startY]
     // Top right to bottom left
     if(startX > endX && startY > endY)
         return [endX, endY]

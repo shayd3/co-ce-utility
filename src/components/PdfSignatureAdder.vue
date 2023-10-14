@@ -66,8 +66,8 @@ const handleMouseUp = (event: MouseEvent) => {
     signatureStore.setStartY(startY);
     signatureStore.setEndX(endX);
     signatureStore.setEndY(endY);
-    signatureStore.setWidth(width);
-    signatureStore.setHeight(height);
+    signatureStore.setWidth(Math.abs(width));
+    signatureStore.setHeight(Math.abs(height));
 }
 
 const handleMouseMove = (event: MouseEvent) => {
