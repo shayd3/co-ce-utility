@@ -16,7 +16,7 @@ export default defineConfig({
   build: {
     rollupOptions: {
       external: [
-        'pdfjs-dist/.*/'
+        'pdfjs-dist/types/src/display/display_utils'
       ]
     }
   },
