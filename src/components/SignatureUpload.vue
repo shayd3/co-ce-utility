@@ -52,6 +52,18 @@ const generateImgBlob = (bytes: Uint8Array | undefined | null) => {
 const onClearSignature = () => {
     store.clear()
 }
+
+/**
+ * Gets the tooltip for the signature select button.
+ *
+ * @returns {string}
+ */
+const getClearSignatureToolTip = () => {
+    if (!useSignatureStore().signature) {
+        return "No signature selected.";
+    }
+    return ToolTips.CLEAR_SIGNATURE_TIP;
+}
 </script>
 
 <template>
@@ -64,7 +76,9 @@ const onClearSignature = () => {
         <div v-else>
             <p>No signature selected</p>
         </div>
-        <Button v-tooltip.top="ToolTips.CLEAR_SIGNATURE_TIP" class="w-full" label="Clear Signature" icon="pi pi-times" severity="danger" raised @click="onClearSignature" :disabled="!useSignatureStore().signature"/>
+        <div v-tooltip.top="getClearSignatureToolTip()">
+            <Button class="w-full" label="Clear Signature" icon="pi pi-times" severity="danger" raised @click="onClearSignature" :disabled="!useSignatureStore().signature"/>
+        </div>
     </div>
 </template>
 
