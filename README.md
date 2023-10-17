@@ -1,27 +1,50 @@
 # co-ce-utility
-This utility will take a state credit form in the form of a "bundle" and split, rename, and sign (if needed) the documents.\
+Utility to assist with splitting PDFs into individual pages. Also allows for injection of a signature image into a PDF.
 
-## Getting Started
-### Prerequisites
-You will need to have `yarn` installed on your machine.\
-You can download `yarn` [here](https://classic.yarnpkg.com/en/docs/install/#windows-stable).
+## Recommended IDE Setup
 
-### Installing
-1. Clone the repo
-2. Run `yarn install` to install the dependencies
+[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
 
-## Running the app
-Run `yarn start` to start the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Customize configuration
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+See [Vite Configuration Reference](https://vitejs.dev/config/).
 
-## Deployment
-Run `yarn deploy` to deploy the app to the `gh-page` branch.
-Open [https://shayd3.github.io/co-ce-utility/](https://shayd3.github.io/co-ce-utility/) to view it in the browser.
+## Project Setup
 
-## Built With
-* [React](https://reactjs.org/) - The web framework used
-* [Yarn](https://classic.yarnpkg.com/en/) - Dependency Management
-* [Jest](https://jestjs.io/) - Testing Framework
+```sh
+npm install
+```
+
+### Compile and Hot-Reload for Development
+
+```sh
+npm run dev
+```
+
+### Type-Check, Compile and Minify for Production
+
+```sh
+npm run build
+```
+
+### Run Unit Tests with [Vitest](https://vitest.dev/)
+
+```sh
+npm run test:unit
+```
+
+### Lint with [ESLint](https://eslint.org/)
+
+```sh
+npm run lint
+```
+
+## References
+PrimeVue - https://primefaces.org/primevue
+PrimeFlex - https://www.primefaces.org/primeflex/
+pdf-lib - https://pdf-lib.js.org/
+pdf.js - https://mozilla.github.io/pdf.js/
+
+Vue 3 - https://v3.vuejs.org/guide/introduction.html
+Vite - https://vitejs.dev/guide/
+
