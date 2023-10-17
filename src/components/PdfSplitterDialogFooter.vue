@@ -32,7 +32,9 @@ const ToolTips = {
     PREFIX_TIP: "Text before selected line text",
     SUFFIX_TIP: "Text after selected line text",
     SEPERATOR_TIP: "Chracter/Text to seperate prefix, selected line text, and suffix. I.e. - will produce 'Prefix - Selected Line Text - Suffix' \n Default: ' - '",
-    FORMAT_NAME_TIP: "Format selected line text to name format (Last, First Middle. Suffix). May yeild unexpected results if used on other text."
+    FORMAT_NAME_TIP: "Format selected line text to name format (Last, First Middle. Suffix). May yeild unexpected results if used on other text.",
+    ADD_SIGNATURE_TIP: "Open dialog to add signature to each page of the PDF.",
+    SPLIT_PDF_TIP: "Split PDF into multiple PDFs based on the number of pages in the PDF. The file name of each PDF will be the selected line text with the prefix, suffix, and seperator applied. If selected, each PDF will have the same signature on the same location on each page."
 }
 
 const onSignatureAdd = () => {
@@ -204,11 +206,35 @@ const generateFileName = (lineContent: string) => {
     return lineContent + ".pdf";
 }
 
+/**
+ * Gets the tooltip for the Add Signature button.
+ *
+ * @returns {string}
+ */
+const getAddSignatureButtonTooltip = () => {
+    if (!signatureStore.signature) {
+        return "No signature selected. Please close dialog and select signature.";
+    }
+    return ToolTips.ADD_SIGNATURE_TIP;
+}
+
+/**
+ * Gets the tooltip for the Split button.
+ *
+ * @returns {string}
+ */
+const getPdfSplitButtonToolTip = () => {
+    if (!store.getPdfFile()) {
+        return 'Select a PDF file to split.';
+    }
+    if (store.getSelectedLineIndex() == -1) {
+        return "Select a line in the list above to split the PDF on.";
+    }
+    return ToolTips.SPLIT_PDF_TIP;
+}
 </script>
 
 <!-- TODO:
-Add tooltip for the Split button stating that this will split the PDF into multiple PDFs based on the number of pages in the PDF.
-Add preview of what all the PDFs will be named based on the options selected.
 Add option to download each PDF individually or as a zip file.
 Add clear button for the formating inputs to go back to defaults (blank, blank, " - ")
 Add input to allow re-naming of the resulting zip file. Make this a 2-way bind between the function call or manually typing in the input.
@@ -234,13 +260,17 @@ Add input to allow re-naming of the resulting zip file. Make this a 2-way bind b
             </div>
         </div>
         <div class="flex flex-row">
-            <Button type="button" label="Add Signature" icon="pi pi-plus" :disabled="!signatureStore.signature" @click="onSignatureAdd" />
+            <div v-tooltip.top="getAddSignatureButtonTooltip()" class="inline-block">
+                <Button type="button" label="Add Signature" icon="pi pi-plus" :disabled="!signatureStore.signature" @click="onSignatureAdd" />
+            </div>
         </div>
         <div class="flex flex-row justify-content-between flex-wrap">
             <!-- File Name Preview -->
             <p v-if="store.getSelectedLineContent()" class="flex align-items-center justify-content-center">First File Name Preview: <b>{{ pdfNamePreview() }}</b></p>
             <p v-else><i>Select line to see preview of file name...</i></p>
-            <Button class="flex align-items-center justify-content-center" type="button" label="Split" icon="pi pi-check" @click="closeDialog" autofocus :disabled="store.getSelectedLineIndex() == -1"></Button>
+            <div v-tooltip.top="getPdfSplitButtonToolTip()">
+                <Button class="flex align-items-center justify-content-center" type="button" label="Split" icon="pi pi-check" @click="closeDialog" autofocus :disabled="store.getSelectedLineIndex() == -1"></Button>
+            </div>
         </div>
     </div>
 
