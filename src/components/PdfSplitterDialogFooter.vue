@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// TODO: Switch things up so that work of splitting is done on the PdfSplitter.vue component. Treat this component as a footer for the dialog that just sends events to the parent component.
 import { inject, ref, defineAsyncComponent, markRaw } from "vue";
 import * as fs from 'file-saver';
 import JSZip from "jszip";
