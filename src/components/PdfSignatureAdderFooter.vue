@@ -10,7 +10,7 @@ const dialogRef = inject("dialogRef") as any;
 const toast = useToast();
 
 const ToolTips = {
-    SIGNATURE_ADDER_TIP: "Draw a box around the area where you want the signature to be placed. \n\nNote: The signature will be placed on every page of the PDF."
+    SIGNATURE_ADDER_TIP: "Add the signature to all pages in the selected area."
 }
 
 /**
@@ -31,11 +31,25 @@ const closeDialog = () => {
 const hasAreaDrawn = () => {
     return signatureStore.getStartX() != 0 && signatureStore.getStartY() != 0 && signatureStore.getEndX() != 0 && signatureStore.getEndY() != 0;
 }
+
+/**
+ * Gets the tooltip for the add signature button.
+ *
+ * @returns {string}
+ */
+const getAddSignatureButtonTooltip = () => {
+    if (!hasAreaDrawn()) {
+        return "Draw an area on the PDF to add the signature.";
+    }
+    return ToolTips.SIGNATURE_ADDER_TIP;
+}
 </script>
 
 <template>
         <div class="mt-3">
-            <Button type="button" v-tooltip.top="ToolTips.SIGNATURE_ADDER_TIP" label="Add Signature" icon="pi pi-check" @click="closeDialog" :disabled="!hasAreaDrawn()"></Button>
+            <div v-tooltip.top="getAddSignatureButtonTooltip()" class="inline-block">
+                <Button type="button" label="Add Signature" icon="pi pi-check" @click="closeDialog" :disabled="!hasAreaDrawn()"></Button>
+            </div>
         </div>
 </template>
 
