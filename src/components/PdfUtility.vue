@@ -14,6 +14,10 @@ const PdfSplitter = defineAsyncComponent(() => import('./PdfSplitter.vue'))
 const PdfSplitterDialogFooter = defineAsyncComponent(() => import('./PdfSplitterDialogFooter.vue'))
 const dialog = useDialog();
 
+const ToolTips = {
+    PDF_SPLITTER_TIP: 'Open utility to split PDF.'
+}
+
 const onPdfSplit = () => {
     dialog.open(PdfSplitter, {
         props: {
@@ -34,6 +38,13 @@ const onPdfSplit = () => {
     });
 }
 
+const getPdfSplitToolTip = () => {
+    if (!usePdfStore().getPdfFile()) {
+        return 'Select a PDF file to split.';
+    }
+    return ToolTips.PDF_SPLITTER_TIP;
+}
+
 </script>
 
 <template>
@@ -52,7 +63,9 @@ const onPdfSplit = () => {
     <div class="flex flex-column">
         <div id="pdfSplitter">
             <h2>PDF Splitter</h2>
-            <Button label="Split PDF" icon="pi pi-arrow-right" severity="info" raised @click="onPdfSplit" :disabled="!usePdfStore().getPdfFile()" />
+            <div v-tooltip.top="getPdfSplitToolTip()" class="inline-block">
+                <Button label="Split PDF" icon="pi pi-arrow-right" severity="info" raised @click="onPdfSplit" :disabled="!usePdfStore().getPdfFile()" />
+            </div>
         </div>
     </div>
     <DynamicDialog />
