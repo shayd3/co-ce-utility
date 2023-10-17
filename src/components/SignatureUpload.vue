@@ -4,6 +4,10 @@ import FileUpload from 'primevue/fileupload';
 import { useSignatureStore } from '@/stores/signature';
 
 const store = useSignatureStore();
+const ToolTips = {
+    SIGNATURE_SELECT_TIP: 'Select the signature file to use.',
+    CLEAR_SIGNATURE_TIP: 'Clear the selected signature file.'
+}
 
 /**
  * Handles the file upload for the signature.
@@ -52,7 +56,7 @@ const onClearSignature = () => {
 
 <template>
     <div id="signatureSelect">
-        <FileUpload class="w-full" mode="basic" name="signature" accept="image/*" :multiple="false" :customUpload="true" @uploader="onSignatureFileSelect" :auto="true" chooseLabel="Select Signature"/>
+        <FileUpload v-tooltip.top="ToolTips.SIGNATURE_SELECT_TIP" class="w-full" mode="basic" name="signature" accept="image/*" :multiple="false" :customUpload="true" @uploader="onSignatureFileSelect" :auto="true" chooseLabel="Select Signature"/>
         <h3>Signature Details:</h3>
         <div v-if="useSignatureStore().signature">
             <img :src="generateImgBlob(useSignatureStore().getSignature()) || undefined" alt="Signature Image" />
@@ -60,7 +64,7 @@ const onClearSignature = () => {
         <div v-else>
             <p>No signature selected</p>
         </div>
-        <Button class="w-full" label="Clear Signature" icon="pi pi-times" severity="danger" raised @click="onClearSignature" :disabled="!useSignatureStore().signature"/>
+        <Button v-tooltip.top="ToolTips.CLEAR_SIGNATURE_TIP" class="w-full" label="Clear Signature" icon="pi pi-times" severity="danger" raised @click="onClearSignature" :disabled="!useSignatureStore().signature"/>
     </div>
 </template>
 
