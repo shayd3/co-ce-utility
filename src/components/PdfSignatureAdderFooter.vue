@@ -1,14 +1,10 @@
 <script setup lang="ts">
 import { inject } from "vue";
-
 import Button from 'primevue/button';
 
-import { usePdfStore } from '@/stores/pdf';
 import { useSignatureStore } from '@/stores/signature';
 import { useToast } from "primevue/usetoast";
 
-
-const pdfStore = usePdfStore();
 const signatureStore = useSignatureStore();
 const dialogRef = inject("dialogRef") as any;
 const toast = useToast();

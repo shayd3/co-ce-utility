@@ -4,6 +4,10 @@ import FileUpload from 'primevue/fileupload';
 import { usePdfStore } from '@/stores/pdf';
 
 const store = usePdfStore();
+const ToolTips = {
+    PDF_SELECT_TIP: 'Select the PDF file to split.',
+    CLEAR_PDF_TIP: 'Clear the selected PDF file.'
+}
 
 /**
  * Handles the file upload event.
@@ -30,7 +34,7 @@ const onClearPdf = () => {
 
 <template>
     <div id="pdfSelect">
-        <FileUpload class="w-full" mode="basic" name="pdf" accept="application/pdf" :multiple="false" :customUpload="true" @uploader="onFileSelect" :auto="true" chooseLabel="Select PDF"/>
+        <FileUpload v-tooltip.top="ToolTips.PDF_SELECT_TIP" class="w-full" mode="basic" name="pdf" accept="application/pdf" :multiple="false" :customUpload="true" @uploader="onFileSelect" :auto="true" chooseLabel="Select PDF"/>
         <h3>PDF Details:</h3>
         <div v-if="usePdfStore().getPdfFile()">
             <p><b>Selected File:</b> {{ usePdfStore().getPdfFile()?.name }}</p>
@@ -38,7 +42,7 @@ const onClearPdf = () => {
         <div v-else>
             <p>No PDF selected</p>
         </div>
-        <Button class="w-full" label="Clear PDF" icon="pi pi-times" severity="danger" raised @click="onClearPdf" :disabled="!usePdfStore().getPdfFile()" />
+        <Button v-tooltip.top="ToolTips.CLEAR_PDF_TIP" class="w-full" label="Clear PDF" icon="pi pi-times" severity="danger" raised @click="onClearPdf" :disabled="!usePdfStore().getPdfFile()" />
     </div>
 </template>
 

@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue';
 import { usePdfStore } from '@/stores/pdf';
 import { useSignatureStore } from '@/stores/signature';
 import * as PDFJS from "pdfjs-dist";
+import Message from 'primevue/message';
 
 const pdfStore = usePdfStore();
 const signatureStore = useSignatureStore();
@@ -120,8 +121,8 @@ const handleMouseMove = (event: MouseEvent) => {
 
 <template>
     <div>
-        <Message severity="success" :closable="false">Draw a box where you want to add your signature!<br><br>Note: </Message>
-        <div class="p-d-flex p-flex-column p-ai-center p-mt-2">
+        <Message severity="success" :closable="false">Draw a box where you want to add your signature! This will add the signature to every page in the selected box.</Message>
+        <div class="p-d-flex p-flex-column p-mt-2">
             <canvas class="border-solid" id="pdf-canvas" ref="pdfCanvas" v-on:mousedown="handleMouseDown" v-on:mouseup="handleMouseUp" v-on:mousemove="handleMouseMove" />
         </div>
     </div>
