@@ -13,12 +13,5 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   },
-  build: {
-    rollupOptions: {
-      external: [
-        'pdfjs-dist/types/src/display/display_utils'
-      ]
-    }
-  },
   base: '/co-ce-utility/'
 })
