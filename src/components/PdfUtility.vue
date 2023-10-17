@@ -40,7 +40,7 @@ const onPdfSplit = () => {
 
 const getPdfSplitToolTip = () => {
     if (!usePdfStore().getPdfFile()) {
-        return 'Select a PDF file to split.';
+        return 'Select a PDF file above to split.';
     }
     return ToolTips.PDF_SPLITTER_TIP;
 }
