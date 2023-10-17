@@ -30,6 +30,18 @@ const onClearPdf = () => {
     store.clearPdf()
 }
 
+/**
+ * Gets the tooltip for the PDF select button.
+ *
+ * @returns {string}
+ */
+const getPdfSelectTooltip = () => {
+    if (!usePdfStore().getPdfFile()) {
+        return "No PDF file selected.";
+    }
+    return ToolTips.CLEAR_PDF_TIP;
+}
+
 </script>
 
 <template>
@@ -42,7 +54,9 @@ const onClearPdf = () => {
         <div v-else>
             <p>No PDF selected</p>
         </div>
-        <Button v-tooltip.top="ToolTips.CLEAR_PDF_TIP" class="w-full" label="Clear PDF" icon="pi pi-times" severity="danger" raised @click="onClearPdf" :disabled="!usePdfStore().getPdfFile()" />
+        <div v-tooltip.top="getPdfSelectTooltip()">
+            <Button class="w-full" label="Clear PDF" icon="pi pi-times" severity="danger" raised @click="onClearPdf" :disabled="!usePdfStore().getPdfFile()" />
+        </div>
     </div>
 </template>
 
