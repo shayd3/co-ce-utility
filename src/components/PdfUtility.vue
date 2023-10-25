@@ -50,12 +50,12 @@ const getPdfSplitToolTip = () => {
 <template>
     <div id="pdfPanels" class="flex flex-row gap-3">
         <Panel header="PDF">
-            <div id="pdfDetails">
+            <div class="w-15rem max-w-15rem" id="pdfDetails">
                 <PdfSelect />
             </div>
         </Panel>
         <Panel header="Signature">
-            <div id="signatureDetails">
+            <div class="w-15rem max-w-15rem" id="signatureDetails">
                 <SignatureUpload />
             </div>
         </Panel>

@@ -71,7 +71,7 @@ const getClearSignatureToolTip = () => {
         <FileUpload v-tooltip.top="ToolTips.SIGNATURE_SELECT_TIP" class="w-full" mode="basic" name="signature" accept="image/*" :multiple="false" :customUpload="true" @uploader="onSignatureFileSelect" :auto="true" chooseLabel="Select Signature"/>
         <h3>Signature Details:</h3>
         <div v-if="useSignatureStore().signature">
-            <img :src="generateImgBlob(useSignatureStore().getSignature()) || undefined" alt="Signature Image" />
+            <img :src="generateImgBlob(useSignatureStore().getSignature()) || undefined" alt="Signature Image" class="w-full" />
         </div>
         <div v-else>
             <p>No signature selected</p>
