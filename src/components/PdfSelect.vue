@@ -16,6 +16,7 @@ const ToolTips = {
  * @param event
  */
 const onFileSelect = (event: any) => {
+    store.clearPdf();
     let file = event.files[0] as File;
 
     store.setPdfFile(file);
