@@ -25,6 +25,9 @@ export function formatLineText(lineText: string): string {
 
 
 export function formatLineWithPrefixSuffix(str: string, prefix: string = "", suffix: string = "", seperator: string = ""): string {
+    if(prefix == "" && suffix == "") {
+        return str;
+    }
     if(prefix != "") {
         str = prefix + seperator + str;
     }
