@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // TODO: Switch things up so that work of splitting is done on the PdfSplitter.vue component. Treat this component as a footer for the dialog that just sends events to the parent component.
-import { inject, ref, defineAsyncComponent, markRaw } from "vue";
+import { inject, ref, defineAsyncComponent, markRaw, watch } from "vue";
 import * as fs from 'file-saver';
 import JSZip from "jszip";
 import { PDFDocument, PDFPage } from "pdf-lib";
@@ -26,7 +26,7 @@ const dialog = useDialog();
 const prefixValue = ref("");
 const suffixValue = ref("");
 const seperatorValue = ref(" - ");
-const formatName = ref(true);
+const formatName = ref(false);
 
 const ToolTips = {
     PREFIX_TIP: "Text before selected line text",
@@ -34,8 +34,12 @@ const ToolTips = {
     SEPERATOR_TIP: "Chracter/Text to seperate prefix, selected line text, and suffix. I.e. - will produce 'Prefix - Selected Line Text - Suffix' \n Default: ' - '",
     FORMAT_NAME_TIP: "Format selected line text to name format (Last, First Middle. Suffix). May yeild unexpected results if used on other text.",
     ADD_SIGNATURE_TIP: "Open dialog to add signature to each page of the PDF.",
-    SPLIT_PDF_TIP: "Split PDF into multiple PDFs based on the number of pages in the PDF. The file name of each PDF will be the selected line text with the prefix, suffix, and seperator applied. If selected, each PDF will have the same signature on the same location on each page."
+    SPLIT_PDF_TIP: "Split PDF into multiple PDFs based on the number of pages in the PDF. \n\nThe file name of each PDF will be the selected line text (or the page number if no line is selected) with the prefix, suffix, and seperator applied. \n\nIf selected, each PDF will have the same signature on the same location on each page."
 }
+
+watch(() => store.getSelectedLineIndex(), (val) => {
+    formatName.value = val !== -1;
+});
 
 const onSignatureAdd = () => {
     dialog.open(PdfSignatureAdder, {
@@ -88,8 +92,8 @@ const splitPdf = async () => {
         newPdf.addPage(copiedPage[0]);
         let newPdfBytes = await newPdf.save();
 
-        const selectedLineContent = pdfTextContents[index][store.getSelectedLineIndex()].str;
-        let fileName = generateFileName(selectedLineContent);
+        let fileNameInfix = (store.getSelectedLineIndex() == -1) ? (index + 1).toString() : pdfTextContents[index][store.getSelectedLineIndex()].str
+        let fileName = generateFileName(fileNameInfix);
 
         zipFile.file(fileName, newPdfBytes);
 
@@ -180,13 +184,7 @@ const getAllContentFromPdfPages = async() => {
  * @returns {string}
  */
 const pdfNamePreview = () => {
-    let selectedLineContent = store.getSelectedLineContent();
-
-    if(selectedLineContent == "") {
-        return "";
-    }
-
-    return generateFileName(selectedLineContent);
+    return generateFileName(store.getSelectedLineContent());
 }
 
 /**
@@ -200,8 +198,7 @@ const generateFileName = (lineContent: string) => {
     if (formatName.value) {
         lineContent = formatLineText(lineContent);
     }
-
-    lineContent = formatLineWithPrefixSuffix(lineContent, prefixValue.value, suffixValue.value, seperatorValue.value);
+    lineContent = formatLineWithPrefixSuffix((lineContent || "1"), prefixValue.value, suffixValue.value, seperatorValue.value);
 
     return lineContent + ".pdf";
 }
@@ -227,10 +224,16 @@ const getPdfSplitButtonToolTip = () => {
     if (!store.getPdfFile()) {
         return 'Select a PDF file to split.';
     }
-    if (store.getSelectedLineIndex() == -1) {
-        return "Select a line in the list above to split the PDF on.";
-    }
     return ToolTips.SPLIT_PDF_TIP;
+}
+
+/**
+ * Clears the line selection.
+ *
+ * @returns {void}
+ */
+const clearLineSection = () => {
+    store.setSelectedLine(-1, "");
 }
 </script>
 
@@ -266,10 +269,14 @@ Add input to allow re-naming of the resulting zip file. Make this a 2-way bind b
         </div>
         <div class="flex flex-row justify-content-between flex-wrap">
             <!-- File Name Preview -->
-            <p v-if="store.getSelectedLineContent()" class="flex align-items-center justify-content-center">First File Name Preview: <b>{{ pdfNamePreview() }}</b></p>
-            <p v-else><i>Select line to see preview of file name...</i></p>
-            <div v-tooltip.top="getPdfSplitButtonToolTip()">
-                <Button class="flex align-items-center justify-content-center" type="button" label="Split" icon="pi pi-check" @click="closeDialog" autofocus :disabled="store.getSelectedLineIndex() == -1"></Button>
+            <p class="flex align-items-center justify-content-center">First File Name Preview: <b>{{ pdfNamePreview() }}</b></p>
+            <div class="flex align-items-end justify-content-center">
+                <div> <!-- v-tooltip.top="test"-->
+                    <Button class="flex align-items-center justify-content-center" severity="warning" type="button" label="Clear Selection" icon="pi pi-check" @click="clearLineSection" autofocus></Button>
+                </div>
+                <div v-tooltip.top="getPdfSplitButtonToolTip()">
+                    <Button class="flex align-items-center justify-content-center" type="button" label="Split" icon="pi pi-check" @click="closeDialog" autofocus></Button>
+                </div>
             </div>
         </div>
     </div>
