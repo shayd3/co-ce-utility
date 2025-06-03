@@ -86,7 +86,9 @@ const splitPdf = async () => {
     let pages = pdfDoc.getPages();
 
     for (let index = 0; index < pages.length; index++) {
-        addSignatureToPage(pages[index]);
+        if(signatureStore.signature) {
+            addSignatureToPage(pages[index]);
+        }
         let newPdf = await PDFDocument.create();
         const copiedPage = await newPdf.copyPages(pdfDoc, [index]);
         newPdf.addPage(copiedPage[0]);
